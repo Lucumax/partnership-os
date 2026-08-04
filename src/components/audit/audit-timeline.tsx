@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Paperclip, ShieldCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -58,8 +58,10 @@ export function AuditTimeline({
       newValue: decision,
       rationale: `Human review of the ${opportunityName} recommendation completed; decision approved.`,
     };
-    setEvents((previous) => [approvalEvent, ...previous]);
+    setEvents((previous) => [...previous, approvalEvent]);
   };
+
+  const sortedEvents = [...events].sort((a, b) => a.timestamp.localeCompare(b.timestamp));
 
   return (
     <Card>
@@ -98,7 +100,7 @@ export function AuditTimeline({
         </div>
 
         <ol className="relative flex flex-col gap-4 border-l pl-4">
-          {events.map((event) => (
+          {sortedEvents.map((event) => (
             <li key={event.id} className="relative">
               <span
                 className={cn(
@@ -139,9 +141,20 @@ export function AuditTimeline({
                 <p className="mt-1 text-sm text-muted-foreground">{event.rationale}</p>
               ) : null}
               {event.evidenceIds && event.evidenceIds.length > 0 ? (
-                <p className="mt-1 text-xs text-muted-foreground">
-                  evidence: {event.evidenceIds.join(", ")}
-                </p>
+                <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                  {event.evidenceIds.map((evidenceId) => (
+                    <span
+                      key={evidenceId}
+                      className={cn(
+                        badgeVariants({ variant: "outline" }),
+                        "gap-1 text-xs",
+                      )}
+                    >
+                      <Paperclip className="size-2.5" />
+                      {evidenceId}
+                    </span>
+                  ))}
+                </div>
               ) : null}
             </li>
           ))}
