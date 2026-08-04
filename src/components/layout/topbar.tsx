@@ -3,12 +3,6 @@ import { Download } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { ATLAS_OPPORTUNITY } from "@/lib/fixtures";
 import { stageLabel } from "@/components/portfolio/labels";
 import { cn } from "@/lib/utils";
@@ -30,22 +24,14 @@ export function TopBar() {
           Owner {opportunity.owner}
         </span>
       </div>
-      <TooltipProvider delay={0}>
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <Link
-                href="/opportunities/atlas/audit"
-                className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
-              >
-                <Download aria-hidden="true" />
-                Export
-              </Link>
-            }
-          />
-          <TooltipContent>Exports and the decision audit trail live on the Audit page.</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Link
+        href="/opportunities/atlas/audit"
+        className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+        aria-label="Export and decision audit trail"
+      >
+        <Download aria-hidden="true" />
+        Export
+      </Link>
     </header>
   );
 }

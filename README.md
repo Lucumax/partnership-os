@@ -40,3 +40,9 @@ requires feature flags + credentials.
 ## Status
 
 Phase 0 scaffold complete. See `docs/VALUATION_RECONCILIATION.md` for the seeded-case math.
+
+## Roadmap
+
+MVP v1.0 shipped (walkthrough-ready): see [`ROADMAP.md`](ROADMAP.md) for what's delivered,
+what's deferred to v1.1, and the future direction. Screenshots of all six primary screens
+live in [`docs/screenshots/`](docs/screenshots/).
