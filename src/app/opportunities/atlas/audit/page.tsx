@@ -122,7 +122,7 @@ export default function AuditPage() {
               </div>
 
               <div>
-                <p className="text-sm font-medium">2. Which comparables were used?</p>
+                <p className="text-sm font-medium">2. Which comparable transactions were used?</p>
                 <ul className="mt-1 flex flex-col gap-1 text-sm text-muted-foreground">
                   {selectedComparables.map((comparable) => (
                     <li key={comparable.id}>
@@ -151,7 +151,7 @@ export default function AuditPage() {
               </div>
 
               <div>
-                <p className="text-sm font-medium">4. Confidence factor and why</p>
+                <p className="text-sm font-medium">4. What is the confidence factor and why?</p>
                 <p className="mt-1 text-sm text-muted-foreground">
                   Base-case confidence factor is {base.confidenceFactor.toFixed(2)}. Weighted average
                   of five dimensions:
@@ -187,7 +187,7 @@ export default function AuditPage() {
               </div>
 
               <div>
-                <p className="text-sm font-medium">6. What would change the recommendation?</p>
+                <p className="text-sm font-medium">6. What evidence would change the recommendation?</p>
                 <ul className="mt-1 flex flex-col gap-1 text-sm text-muted-foreground">
                   {recommendation.changeConditions.map((condition) => (
                     <li key={condition}>{condition}</li>
