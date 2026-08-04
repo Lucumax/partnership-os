@@ -51,6 +51,10 @@ describe("toJson", () => {
     expect(parsed.case.recommendation?.decision).toBe("pilot");
   });
 
+  it("round-trips the full case object", () => {
+    expect(parsed.case).toEqual(ATLAS_OPPORTUNITY);
+  });
+
   it("includes the seeded numbers in the payload", () => {
     expect(json).toContain("25.2");
     expect(json).toContain("audit-003");
@@ -60,10 +64,10 @@ describe("toJson", () => {
 describe("toCsv", () => {
   const csv = toCsv(ATLAS_COMPARABLES);
 
-  it("emits a header and one row per comparable", () => {
+  it("emits a header row and one row per comparable", () => {
     const lines = csv.trim().split("\n");
-    expect(lines.length).toBe(ATLAS_COMPARABLES.length + 1);
     expect(lines[0]).toContain("comparabilityScore");
+    expect(lines.slice(1)).toHaveLength(5);
   });
 
   it("lists all five seeded comparables", () => {
