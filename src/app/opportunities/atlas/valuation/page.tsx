@@ -99,6 +99,14 @@ export default function ValuationPage() {
           <ConfidenceBreakdown valuation={valuation} />
         </div>
       </div>
+
+      <footer className="evidence-strip">
+        <strong>Sources &amp; basis:</strong> all figures are deterministic outputs of the seeded
+        synthetic Atlas case (source type: synthetic). Confidence factor is the equal-weight mean of
+        five dimensions; NPV applies a {fmtPct(valuation.discountRate)} discount rate to the contract
+        cash schedule only (G-2). Sensitivities are ±10% on the top assumptions. No live AI — engine
+        is fixture-backed.
+      </footer>
     </div>
   );
 }

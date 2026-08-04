@@ -11,6 +11,7 @@ import {
 import { computeValuation } from "@/lib/valuation/engine";
 import { deriveGiveGetRows, derivePartnerQuestions, deriveRedLines } from "@/lib/negotiation/derive";
 import { formatDate, toJson, toMarkdown } from "@/lib/export";
+import { decisionLabel } from "@/components/portfolio/labels";
 import { badgeVariants } from "@/components/ui/badge";
 import {
   Card,
@@ -55,7 +56,7 @@ export default function NegotiationPage() {
         <div className="flex flex-wrap items-center gap-2">
           <span className={cn(badgeVariants({ variant: "outline" }))}>Synthetic</span>
           <span className={cn(badgeVariants({ variant: "default" }))}>
-            Decision · {recommendation.decision}
+            Decision · {decisionLabel(recommendation.decision)}
           </span>
           <AILabel
             label="AI draft"

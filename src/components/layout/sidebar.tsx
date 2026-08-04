@@ -39,8 +39,13 @@ export function Sidebar() {
   return (
     <aside className="flex h-full w-56 shrink-0 flex-col border-r bg-sidebar text-sidebar-foreground">
       <div className="flex h-14 shrink-0 items-center gap-2.5 border-b px-4">
-        <div className="size-2.5 rounded-sm bg-foreground" aria-hidden="true" />
-        <div className="text-sm font-semibold tracking-tight">Partnership OS</div>
+        <div className="flex size-6 items-center justify-center rounded-sm bg-primary text-[11px] font-bold text-primary-foreground" aria-hidden="true">
+          PO
+        </div>
+        <div>
+          <div className="text-sm font-semibold tracking-tight">Partnership OS</div>
+          <div className="text-[10px] leading-none text-muted-foreground">Valuation · Negotiation · Governance</div>
+        </div>
       </div>
       <nav className="flex flex-1 flex-col gap-0.5 p-3">
         <div className="px-2.5 pb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -59,8 +64,9 @@ export function Sidebar() {
                   : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
               )}
             >
-              <Icon className="size-4 shrink-0" aria-hidden="true" />
+              <Icon className={cn("size-4 shrink-0", active ? "text-primary" : "")} aria-hidden="true" />
               {label}
+              {active ? <span className="ml-auto size-1.5 rounded-full bg-primary" aria-hidden="true" /> : null}
             </Link>
           );
         })}

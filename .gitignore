@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Playwright output
+test-results/
+playwright-report/
+
+# Local deck artifacts (Walter-owned)
+Partnership-Value-OS.pdf
+Partnership-Value-OS.pptx

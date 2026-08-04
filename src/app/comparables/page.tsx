@@ -70,6 +70,13 @@ export default function ComparablesPage() {
           <ComparableTable rows={visibleRows} />
         </CardContent>
       </Card>
+
+      <footer className="evidence-strip">
+        <strong>Comparability basis:</strong> weighted score (archetype 25% · rights/exclusivity 20% ·
+        economic structure 20% · term/renewal 10% · distribution/usage 10% · integration burden 10% ·
+        source quality 5%). Recency decay applies after 24 months (G-15). All comparables are
+        synthetic fixtures; each carries a source-quality score and normalization note.
+      </footer>
     </div>
   );
 }
