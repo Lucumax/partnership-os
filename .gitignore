@@ -47,3 +47,6 @@ playwright-report/
 # Local deck artifacts (Walter-owned)
 Partnership-Value-OS.pdf
 Partnership-Value-OS.pptx
+
+# VSH build spec (Walter-owned, not part of the app)
+.vsh_build_spec.txt
