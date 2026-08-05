@@ -131,3 +131,146 @@ Atlas and the case we declined — fall short."*). Acronyms are expanded on firs
   explicit rather than pretending to be portfolio-wide.
 - `npx vitest run` emits a Vite warning about ESM-in-CJS config loading (`configLoader: 'native'`).
   Pre-existing, non-fatal.
+
+---
+
+# Round 2 — Consistency & Accessibility (2026-08-05)
+
+Round 2 closed the documentation/screenshot gap that round 1 opened and added the WCAG 2.2
+baseline that ROADMAP had deferred to v1.4. `src/lib/valuation/` was not touched; no new
+runtime dependencies; `scripts/reconcile_check.py` unchanged and its output byte-identical.
+
+## 1. Gates (K1) — all green, real output
+
+| Gate | Command | Result |
+|---|---|---|
+| Lint | `npm run lint` | ✅ 0 errors, 0 warnings |
+| Typecheck | `npx tsc --noEmit` | ✅ 0 errors |
+| Unit tests | `npx vitest run` | ✅ 6 files / **75 passed** (unchanged from round 1) |
+| Build | `npm run build` | ✅ success, **10 routes prerendered static** |
+| E2E | `npx playwright test` | ✅ **12 passed** (was 7; +5 new a11y tests) |
+| Reconcile | `python scripts/reconcile_check.py` | ✅ `RECONCILIATION OK` |
+
+`python scripts/reconcile_check.py` (byte-identical to the hard contract):
+
+```
+downside  GPV=14.0 CF=0.55 CAV=7.7   gap=-23.3
+base      GPV=35.0 CF=0.72 CAV=25.2  gap=-5.8
+upside    GPV=62.0 CF=0.78 CAV=48.4  gap=17.4
+G-2 NPV of $31.0M nominal cash cost @ 12%: 25.62M
+RECONCILIATION OK
+```
+
+Test counts: unit **75** (no change, never decreased), e2e **7 → 12** (+5). No existing assertion
+was weakened or removed anywhere.
+
+## 2. Task G — Screenshots regenerated & reproducible
+
+- New `scripts/capture-screenshots.mjs`: builds the production app, starts `next start` on
+  `:3100`, and captures **full-page, 1440×900 @ 2× deviceScaleFactor** screenshots of all seven
+  primary routes, waiting ~2.5s for Recharts entrance animations to settle. It refuses to shoot a
+  route that renders the Next.js error boundary. Production build ⇒ no dev-tools indicator can
+  appear. One-line command (`node scripts/capture-screenshots.mjs`) documented in the README.
+- Output: `docs/screenshots/01-dashboard.png` … `07-audit.png` (dashboard, opportunities index,
+  atlas overview, valuation workbench, comparable library, negotiation brief, audit & decision
+  history).
+- All ten stale screenshots deleted: `hardened-*` (×6) and `track-a-*` / `track-b-*` (×4). No
+  second generation remains.
+
+## 3. Task H — README / ROADMAP accuracy
+
+- **H1 (the credibility fix):** README "Stack" previously said the AI-assistant interface "is
+  disabled by default and requires feature flags + credentials", implying the flags would turn it
+  on. That was false — `ClaudePartnershipAnalysisAssistant` throws `NOT_IMPLEMENTED` even when
+  fully configured and nothing in `src/app` or `src/components` calls `getAssistant()` at all.
+  README now states the truth: the interface + deterministic fixture implementation exist and drive
+  the `AI draft` labels; the live (Claude) implementation is a **typed stub** and its calls are not
+  implemented; live AI is a demo boundary, not a flag switch.
+- **H2:** README "Status" now describes the six-case portfolio (Atlas modeled end-to-end, five
+  portfolio-level entries), the `/opportunities` index, and current-dated fixtures (2026-07-30).
+- **H3:** README points at the new `01-…07-` screenshot filenames and documents the capture command.
+- **H4 (mojibake):** verified rather than assumed. The ROADMAP title em dash is already correct
+  UTF-8 (`e2 80 94` — hexdump confirmed); a byte scan of README and ROADMAP found **no** mojibake
+  artifacts, so there was nothing to fix. The `OS ?"` claim did not reproduce in this tree.
+- **H5/H6:** ROADMAP shipped-features table updated (six-case dashboard, `/opportunities` index,
+  accessibility baseline; unit 75 / 10 static routes / 12 e2e). The multi-opportunity portfolio was
+  moved out of the v1.1 future list into a **"Partially delivered"** note (portfolio-level shell
+  only; one modeled case). Accessibility was moved out of the v1.4 deferred list into delivered as
+  a **baseline**, with the formal audit + attestation still future. Nothing overstated.
+
+## 4. Task I — Accessibility baseline (previously deferred to v1.4)
+
+Issues found and fixed:
+
+- **Nested `<main>` landmarks** in `negotiation` and `audit` pages (a `<main>` inside the layout's
+  `<main>`) → outer elements changed to `<div>`; exactly one `<main>` per route now.
+- **Heading outline:** `CardTitle` rendered a `<div>` (screen readers saw no outline). It now
+  renders `<h2>` (no visual change), proposal sections `<h3>`→`<h2>`, comparable detail panels
+  `<h4>`→`<h3>`. Every route has exactly one `<h1>` and an ordered outline with no skips.
+- **Keyboard:** links in the sidebar, the dashboard/opportunities tables, and the back-links had
+  hover-only affordances → explicit `focus-visible` classes plus a global
+  `:focus-visible { outline: 2px solid var(--ring) }` safety net. The "Portfolio view only"
+  tooltip trigger was a non-focusable `<span>` → now `tabIndex={0}` so the tooltip is reachable
+  without a mouse.
+- **Charts:** all five Recharts components were invisible to screen readers → each container is now
+  `role="img"` with a **data-driven** `aria-label` describing the actual figures (per-stage counts,
+  per-case spend/value/gap, per-scenario GPV/CAV/gap, waterfall steps), complementing the existing
+  visible captions.
+- **Tables:** `<th>` now defaults to `scope="col"`; every table across the app is named via an
+  `aria-label` or an `sr-only` `<caption>`.
+- **Icons:** decorative lucide icons made `aria-hidden` (audit timeline, exports, negotiation
+  actions, red-team, sensitivities, confidence breakdown, proposal, back-links, expand/collapse).
+  Meaning-bearing icons keep their button `aria-label`.
+- **I7 (automated):** `tests/e2e/a11y.spec.ts` — 5 tests covering all 8 routes: one `h1` + ordered
+  outline; landmarks + `lang="en"` + non-empty title; every table named + every `th` scoped; every
+  chart has a real aria-label; keyboard focus is visible and never trapped (tabs through each route
+  asserting a visible indicator and forward movement).
+
+## 5. Task J — Docs date & number consistency
+
+- Grepped `docs/` and `scripts/` for absolute 2025 dates: the only hits are genuine research
+  citations in `docs/research/*` (FTC staff report Jan 2025; Stanford Law 2025; Warren/Wyden
+  letters) — real publication references, left as-is. No stale demo-fixture dates exist in docs.
+- `docs/VALUATION_RECONCILIATION.md` still matches the code exactly (14.0/35.0/62.0 ·
+  0.55/0.72/0.78 · 7.7/25.2/48.4 · −23.3/−5.8/+17.4 · NPV 25.62) — no change needed.
+- No doc states a portfolio total that contradicts the dashboard; verified the dashboard contract
+  against `src/lib/fixtures/portfolio.ts` (Σgross 136.0 · ΣCAV 85.0 · Σspend 82.0 · 6 entries).
+- `docs/UI_CONTRACT.md`: added a clearly-marked "Round 2 reconciliation" section (`/opportunities`
+  route, `portfolio.ts` data source, UPPERCASE export names, superseded per-track screenshot
+  instruction) and corrected the "Key exports" list to the actual names; historical contract text
+  preserved.
+- `docs/backlog/V1.1_BACKLOG.md`: added a note that the six-case portfolio shell shipped; all
+  G-5..G-16 remain deferred.
+
+## 6. Contrast — before → after (computed WCAG ratios)
+
+Token changes in `globals.css` `:root` only (`--muted-foreground` 0.47→0.44, `--destructive`
+0.58/0.2/30→0.54/0.2/28, `--chart-5` 0.70→0.62, `--input` 0.88→0.86). Palette otherwise untouched.
+
+| Pair | Before | After | Requirement |
+|---|---:|---:|---|
+| `muted-foreground` on background | 6.35:1 | **7.22:1** | 4.5:1 text ✅ |
+| `destructive` text on background | 4.39:1 | **5.21:1** | 4.5:1 text ✅ |
+| destructive badge text on `bg-destructive/10` | 4.06:1 | **4.79:1** | 4.5:1 text ✅ |
+| `chart-5` (non-text) on background | 2.44:1 | **3.32:1** | 3:1 non-text ✅ |
+| `input` border on background | 1.34:1 | 1.42:1 | 3:1 non-text (see below) |
+| `border` (hairline) on background | 1.25:1 | unchanged | 3:1 non-text (see below) |
+
+## 7. Consciously left alone (with reasons)
+
+- **Hairline borders don't reach 3:1 non-text.** WCAG 1.4.11's 3:1 for UI boundaries would require
+  border lightness ≈ 0.58 — a much darker, heavy frame that redesigns the executive-tool aesthetic,
+  which the spec forbids. Controls remain identifiable via their fill and focus-ring states; the
+  residual gap is documented, not hidden.
+- **`docs/research/*` 2025 citations** — real publication references, not fixture dates.
+- **2025 comparable announcement dates in fixtures** — market history before the fixed 2026-07-30
+  analysis date; the recency-decay (G-15) calculation depends on them.
+- **No new unit tests.** Round-2 changes are UI/accessibility/docs; the a11y behaviour is enforced
+  by the 5 new Playwright tests. Unit count unchanged at 75 (never decreased).
+- **Audit "system system" actor badge** — pre-existing technical audit-log rendering, out of scope.
+- **`package-lock.json`** carries a pre-existing platform diff (removal of `libc` metadata on
+  optional binary packages, from an npm-version install difference). No dependency changed in round
+  2, so it is left uncommitted rather than churning the lockfile.
+- **Untracked environment files** (`GITHUB_AUDIT_REPORT.md`, `PREP_MANIFEST.md`,
+  `anthropic_partnership_value_os_spec.zip`, `spec/anthropic_partnership_value_os/`) are not part
+  of the app and were not committed.
