@@ -17,8 +17,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://partnership-os-one.vercel.app"),
   title: "Partnership OS",
-  description: "Defensible partnership decisions when comparables are sparse.",
+  description: "Defensible partnership decisions when the comparables are thin.",
+  openGraph: {
+    title: "Partnership OS",
+    description: "Defensible partnership decisions when the comparables are thin.",
+    siteName: "Partnership OS",
+    type: "website",
+    locale: "en_US",
+    url: "https://partnership-os-one.vercel.app",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Partnership OS",
+    description: "Defensible partnership decisions when the comparables are thin.",
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
