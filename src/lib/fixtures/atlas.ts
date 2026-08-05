@@ -11,7 +11,10 @@ import type {
   ScenarioInput,
 } from "@/lib/domain/types";
 
-export const ATLAS_ANALYSIS_DATE = "2025-06-30T00:00:00Z";
+// Deliberately fixed constant: the demo is statically prerendered and the tests are
+// deterministic golden tests, so a moving date would break both. Roll this forward by a
+// uniform offset when the demo is refreshed — every date in this fixture moves together.
+export const ATLAS_ANALYSIS_DATE = "2026-07-30T00:00:00Z";
 
 export const ATLAS_PROPOSAL: ProposalTerms = {
   termMonths: 36,
@@ -165,7 +168,7 @@ export const ATLAS_ASSUMPTIONS: Assumption[] = [
     scenarioValues: { downside: 0.45, base: 0.75, upside: 1.1 },
     confidence: "medium",
     owner: "deal.lead",
-    lastUpdatedAt: "2025-06-12T00:00:00Z",
+    lastUpdatedAt: "2026-07-12T00:00:00Z",
   },
   {
     id: "assumption-integration-months",
@@ -176,7 +179,7 @@ export const ATLAS_ASSUMPTIONS: Assumption[] = [
     scenarioValues: { downside: 12, base: 7, upside: 4 },
     confidence: "medium",
     owner: "delivery.lead",
-    lastUpdatedAt: "2025-06-01T00:00:00Z",
+    lastUpdatedAt: "2026-07-01T00:00:00Z",
   },
   {
     id: "assumption-renewal-probability",
@@ -187,7 +190,7 @@ export const ATLAS_ASSUMPTIONS: Assumption[] = [
     scenarioValues: { downside: 0.35, base: 0.6, upside: 0.8 },
     confidence: "low",
     owner: "deal.lead",
-    lastUpdatedAt: "2025-06-01T00:00:00Z",
+    lastUpdatedAt: "2026-07-01T00:00:00Z",
   },
   {
     id: "assumption-distribution-value",
@@ -197,7 +200,7 @@ export const ATLAS_ASSUMPTIONS: Assumption[] = [
     scenarioValues: { downside: "limited", base: "moderate", upside: "strong" },
     confidence: "low",
     owner: "strategy.ops.lead",
-    lastUpdatedAt: "2025-06-01T00:00:00Z",
+    lastUpdatedAt: "2026-07-01T00:00:00Z",
   },
   {
     id: "assumption-implementation-cost",
@@ -207,7 +210,7 @@ export const ATLAS_ASSUMPTIONS: Assumption[] = [
     scenarioValues: { downside: "higher than expected", base: "expected", upside: "expected" },
     confidence: "medium",
     owner: "delivery.lead",
-    lastUpdatedAt: "2025-06-01T00:00:00Z",
+    lastUpdatedAt: "2026-07-01T00:00:00Z",
   },
   {
     id: "assumption-discount-rate",
@@ -217,7 +220,7 @@ export const ATLAS_ASSUMPTIONS: Assumption[] = [
     unit: "annual rate",
     confidence: "high",
     owner: "system",
-    lastUpdatedAt: "2025-06-01T00:00:00Z",
+    lastUpdatedAt: "2026-07-01T00:00:00Z",
   },
 ];
 
@@ -317,7 +320,7 @@ export const ATLAS_COMPARABLES: ComparableTransaction[] = [
     id: "cmp-northstar-data-license",
     name: "Northstar Data License",
     archetype: "data_licensing",
-    announcementDate: "2023-09-15T00:00:00Z",
+    announcementDate: "2024-10-15T00:00:00Z",
     disclosedValueUsd: 12.0,
     termMonths: 36,
     cashComponentUsd: 12.0,
@@ -340,7 +343,7 @@ export const ATLAS_COMPARABLES: ComparableTransaction[] = [
     id: "cmp-meridian-api-integration",
     name: "Meridian API Integration",
     archetype: "product_integration",
-    announcementDate: "2024-01-20T00:00:00Z",
+    announcementDate: "2025-02-20T00:00:00Z",
     disclosedValueUsd: 8.5,
     termMonths: 24,
     cashComponentUsd: 6.5,
@@ -365,7 +368,7 @@ export const ATLAS_COMPARABLES: ComparableTransaction[] = [
     id: "cmp-harbor-enterprise-channel",
     name: "Harbor Enterprise Channel",
     archetype: "distribution",
-    announcementDate: "2024-04-10T00:00:00Z",
+    announcementDate: "2025-05-10T00:00:00Z",
     disclosedValueUsd: 20.0,
     termMonths: 48,
     cashComponentUsd: 20.0,
@@ -390,7 +393,7 @@ export const ATLAS_COMPARABLES: ComparableTransaction[] = [
     id: "cmp-keystone-strategic-alliance",
     name: "Keystone Strategic Alliance",
     archetype: "strategic_ecosystem",
-    announcementDate: "2023-11-05T00:00:00Z",
+    announcementDate: "2024-12-05T00:00:00Z",
     disclosedValueUsd: 15.0,
     termMonths: 36,
     inKindValueUsd: 15.0,
@@ -413,7 +416,7 @@ export const ATLAS_COMPARABLES: ComparableTransaction[] = [
     id: "cmp-pioneer-hybrid-agreement",
     name: "Pioneer Hybrid Agreement",
     archetype: "hybrid",
-    announcementDate: "2024-06-12T00:00:00Z",
+    announcementDate: "2025-07-12T00:00:00Z",
     disclosedValueUsd: 30.0,
     termMonths: 36,
     cashComponentUsd: 24.0,
@@ -477,9 +480,9 @@ export const ATLAS_OPPORTUNITY: Opportunity = {
   archetype: "hybrid",
   stage: "valuation",
   owner: "strategy.ops.lead",
-  createdAt: "2025-06-01T00:00:00Z",
-  decisionDate: "2025-08-01T00:00:00Z",
-  renewalDate: "2028-06-01T00:00:00Z",
+  createdAt: "2026-07-01T00:00:00Z",
+  decisionDate: "2026-09-01T00:00:00Z",
+  renewalDate: "2029-07-01T00:00:00Z",
   proposal: ATLAS_PROPOSAL,
   assumptions: ATLAS_ASSUMPTIONS,
   selectedComparableIds: ATLAS_COMPARABLES.map((comparable) => comparable.id),
@@ -491,26 +494,26 @@ export const ATLAS_OPPORTUNITY: Opportunity = {
       id: "approval-intake-001",
       gate: "Intake completeness",
       approver: "strategy.ops.lead",
-      approvedAt: "2025-06-02T00:00:00Z",
+      approvedAt: "2026-07-02T00:00:00Z",
       note: "All terms captured; sources labeled synthetic.",
     },
     {
       id: "approval-assumptions-001",
       gate: "Assumption lock",
       approver: "deal.lead",
-      approvedAt: "2025-06-05T00:00:00Z",
+      approvedAt: "2026-07-05T00:00:00Z",
     },
     {
       id: "approval-comparables-001",
       gate: "Comparable set",
       approver: "research.stakeholder",
-      approvedAt: "2025-06-10T00:00:00Z",
+      approvedAt: "2026-07-10T00:00:00Z",
     },
   ],
   auditEvents: [
     {
       id: "audit-001",
-      timestamp: "2025-06-01T00:00:00Z",
+      timestamp: "2026-07-01T00:00:00Z",
       actor: "system",
       actorType: "system",
       action: "opportunity.created",
@@ -520,7 +523,7 @@ export const ATLAS_OPPORTUNITY: Opportunity = {
     },
     {
       id: "audit-002",
-      timestamp: "2025-06-12T00:00:00Z",
+      timestamp: "2026-07-12T00:00:00Z",
       actor: "deal.lead",
       actorType: "human",
       action: "assumption.updated",
@@ -531,7 +534,7 @@ export const ATLAS_OPPORTUNITY: Opportunity = {
     },
     {
       id: "audit-003",
-      timestamp: "2025-06-15T00:00:00Z",
+      timestamp: "2026-07-15T00:00:00Z",
       actor: "system",
       actorType: "system",
       action: "recommendation.generated",

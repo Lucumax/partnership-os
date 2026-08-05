@@ -55,7 +55,7 @@ const VALUE_DEFS: AssumptionVariableDef[] = [
     evidence: "Term sheet economics: upfront + annual license",
     confidence: "medium",
     owner: "deal.lead",
-    lastUpdatedAt: "2025-06-12",
+    lastUpdatedAt: "2026-07-12",
   },
   {
     field: "usageCustomerValueUsd",
@@ -64,7 +64,7 @@ const VALUE_DEFS: AssumptionVariableDef[] = [
     evidence: "Usage ramp from discovery calls (adoption plan)",
     confidence: "medium",
     owner: "deal.lead",
-    lastUpdatedAt: "2025-06-12",
+    lastUpdatedAt: "2026-07-12",
   },
   {
     field: "productCapabilityValueUsd",
@@ -73,7 +73,7 @@ const VALUE_DEFS: AssumptionVariableDef[] = [
     evidence: "Product integration roadmap estimate",
     confidence: "medium",
     owner: "delivery.lead",
-    lastUpdatedAt: "2025-06-01",
+    lastUpdatedAt: "2026-07-01",
   },
   {
     field: "distributionValueUsd",
@@ -82,7 +82,7 @@ const VALUE_DEFS: AssumptionVariableDef[] = [
     evidence: "Distribution upside un-evidenced (seed assumption)",
     confidence: "low",
     owner: "strategy.ops.lead",
-    lastUpdatedAt: "2025-06-01",
+    lastUpdatedAt: "2026-07-01",
   },
   {
     field: "strategicOptionValueUsd",
@@ -91,7 +91,7 @@ const VALUE_DEFS: AssumptionVariableDef[] = [
     evidence: "Option value from category access",
     confidence: "low",
     owner: "strategy.ops.lead",
-    lastUpdatedAt: "2025-06-01",
+    lastUpdatedAt: "2026-07-01",
   },
   {
     field: "learningValueUsd",
@@ -100,16 +100,16 @@ const VALUE_DEFS: AssumptionVariableDef[] = [
     evidence: "Model-training feedback loop",
     confidence: "low",
     owner: "deal.lead",
-    lastUpdatedAt: "2025-06-01",
+    lastUpdatedAt: "2026-07-01",
   },
   {
     field: "brandValueUsd",
     variable: "Brand / ecosystem value",
     kind: "value",
-    evidence: "Brand halo effect (G-11)",
+    evidence: "Brand halo effect",
     confidence: "low",
     owner: "strategy.ops.lead",
-    lastUpdatedAt: "2025-06-01",
+    lastUpdatedAt: "2026-07-01",
   },
 ];
 
@@ -121,16 +121,16 @@ const COST_DEFS: AssumptionVariableDef[] = [
     evidence: "Implementation support $1.5M equivalent",
     confidence: "medium",
     owner: "delivery.lead",
-    lastUpdatedAt: "2025-06-01",
+    lastUpdatedAt: "2026-07-01",
   },
   {
     field: "exclusivityOpportunityCostUsd",
     variable: "Exclusivity opportunity cost",
     kind: "cost",
-    evidence: "Limited category exclusivity (G-1 rights)",
+    evidence: "Limited category exclusivity (structured rights)",
     confidence: "medium",
     owner: "legal.reviewer",
-    lastUpdatedAt: "2025-06-01",
+    lastUpdatedAt: "2026-07-01",
   },
   {
     field: "concentrationLockInCostUsd",
@@ -139,16 +139,16 @@ const COST_DEFS: AssumptionVariableDef[] = [
     evidence: "Supplier concentration exposure",
     confidence: "medium",
     owner: "strategy.ops.lead",
-    lastUpdatedAt: "2025-06-01",
+    lastUpdatedAt: "2026-07-01",
   },
   {
     field: "exitCostUsd",
     variable: "Exit / break-up cost",
     kind: "cost",
-    evidence: "Convenience-after-year-two termination fee (G-4)",
+    evidence: "Convenience-after-year-two termination fee",
     confidence: "medium",
     owner: "legal.reviewer",
-    lastUpdatedAt: "2025-06-01",
+    lastUpdatedAt: "2026-07-01",
   },
 ];
 
@@ -160,7 +160,7 @@ const CONFIDENCE_DEFS: AssumptionVariableDef[] = [
     evidence: "Quality and recency of supporting evidence",
     confidence: "medium",
     owner: "research.stakeholder",
-    lastUpdatedAt: "2025-06-01",
+    lastUpdatedAt: "2026-07-01",
   },
   {
     field: "assumptionStability",
@@ -169,7 +169,7 @@ const CONFIDENCE_DEFS: AssumptionVariableDef[] = [
     evidence: "Volatility of underlying assumptions",
     confidence: "medium",
     owner: "deal.lead",
-    lastUpdatedAt: "2025-06-01",
+    lastUpdatedAt: "2026-07-01",
   },
   {
     field: "comparableQuality",
@@ -178,7 +178,7 @@ const CONFIDENCE_DEFS: AssumptionVariableDef[] = [
     evidence: "Fit of comparable library and recency",
     confidence: "medium",
     owner: "research.stakeholder",
-    lastUpdatedAt: "2025-06-01",
+    lastUpdatedAt: "2026-07-01",
   },
   {
     field: "implementationCertainty",
@@ -187,7 +187,7 @@ const CONFIDENCE_DEFS: AssumptionVariableDef[] = [
     evidence: "Delivery confidence and track record",
     confidence: "medium",
     owner: "delivery.lead",
-    lastUpdatedAt: "2025-06-01",
+    lastUpdatedAt: "2026-07-01",
   },
   {
     field: "partnerExecutionConfidence",
@@ -196,7 +196,7 @@ const CONFIDENCE_DEFS: AssumptionVariableDef[] = [
     evidence: "Partner delivery and ops maturity",
     confidence: "medium",
     owner: "deal.lead",
-    lastUpdatedAt: "2025-06-01",
+    lastUpdatedAt: "2026-07-01",
   },
 ];
 

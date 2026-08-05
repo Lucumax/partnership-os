@@ -130,16 +130,16 @@ describe("G-15 recency decay", () => {
   }
 
   it("applies no decay within 24 months", () => {
-    expect(recencyDecayFactor("2024-06-12T00:00:00Z", analysisDate)).toBe(1);
+    expect(recencyDecayFactor("2025-07-12T00:00:00Z", analysisDate)).toBe(1);
   });
 
   it("decays stale comparables and floors at 0.5", () => {
-    expect(recencyDecayFactor("2019-06-30T00:00:00Z", analysisDate)).toBeCloseTo(0.5, 6);
+    expect(recencyDecayFactor("2020-07-30T00:00:00Z", analysisDate)).toBeCloseTo(0.5, 6);
   });
 
   it("a stale comparable scores strictly lower than an identical recent one", () => {
-    const recent = comparabilityScore(comparableWithDate("2024-06-12T00:00:00Z"), ATLAS_COMPARABILITY_TARGET, analysisDate);
-    const stale = comparabilityScore(comparableWithDate("2019-06-30T00:00:00Z"), ATLAS_COMPARABILITY_TARGET, analysisDate);
+    const recent = comparabilityScore(comparableWithDate("2025-07-12T00:00:00Z"), ATLAS_COMPARABILITY_TARGET, analysisDate);
+    const stale = comparabilityScore(comparableWithDate("2020-07-30T00:00:00Z"), ATLAS_COMPARABILITY_TARGET, analysisDate);
     expect(stale.rawScore).toBeCloseTo(recent.rawScore, 9);
     expect(stale.adjustedScore).toBeLessThan(recent.adjustedScore);
   });

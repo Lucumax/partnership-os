@@ -117,7 +117,7 @@ describe("computeComparability", () => {
     const stale = {
       ...pioneer!,
       id: "cmp-pioneer-stale",
-      announcementDate: "2019-06-30T00:00:00Z",
+      announcementDate: "2020-07-30T00:00:00Z",
     };
     const recent = computeComparability(pioneer!, ATLAS_COMPARABILITY_TARGET, ATLAS_ANALYSIS_DATE);
     const staleResult = computeComparability(stale, ATLAS_COMPARABILITY_TARGET, ATLAS_ANALYSIS_DATE);
