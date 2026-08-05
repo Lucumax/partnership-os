@@ -23,7 +23,8 @@ A local-first decision-support app that converts an inbound partnership proposal
 
 | Area | What's in v1.0 |
 |---|---|
-| Portfolio dashboard | KPIs (pipeline value, CAV, spend, decisions due), stage funnel, value-vs-spend scatter, concentration by archetype, upcoming decisions, recent assumption changes |
+| Portfolio dashboard | Six-case portfolio (Atlas modeled end-to-end; five portfolio-level entries): KPIs (pipeline value, CAV, spend, decisions due), stage funnel, value-vs-spend scatter, concentration by archetype, upcoming decisions, recent assumption changes |
+| Opportunities index | `/opportunities` portfolio table — stage, proposed cost, CAV, gap per case (added in round 1) |
 | Opportunity overview | Summary, proposed economics, recommendation, value range, top sensitivities, confidence score, open questions, risks, approval status |
 | Proposal intake | Two-column structured form over the typed `ProposalTerms`; regulatory flags (G-3); diligence questions |
 | Valuation workbench | Live-recompute scenario cards (gross/CAV/ROI/payback/gap), base-case waterfall, editable assumption table, top-5 sensitivities (±10%), red-team flags, confidence-factor breakdown, NPV of cash cost (G-2) |
@@ -32,15 +33,20 @@ A local-first decision-support app that converts an inbound partnership proposal
 | Audit & decision history | Event timeline (actor/timestamp/rationale), human approval gate, 7-question explainability block |
 | Exports | Markdown decision memo, JSON full case, CSV comparables, browser downloads |
 | AI-assistant layer | `PartnershipAnalysisAssistant` interface + deterministic fixture implementation; live Claude stub behind disabled-by-default flags; `AI draft` labeling |
-| Deterministic engine | GPV / CAV / ROI / ERC / comparability / confidence-factor / NPV formulas; 63 unit tests; seeded reconciliation matches the spec exactly |
+| Deterministic engine | GPV / CAV / ROI / ERC / comparability / confidence-factor / NPV formulas; 75 unit tests; seeded reconciliation matches the spec exactly |
+| Accessibility baseline | WCAG 2.2 AA baseline (round 2): one h1 per route, ordered heading outline, landmarks, visible keyboard focus, named tables and charts, contrast fixes, automated Playwright assertions |
+
+**Partially delivered:** the multi-opportunity portfolio ships as a portfolio-level shell
+(six cases; one modeled end-to-end, five portfolio-level entries). Deep per-case modeling
+of the additional cases is still future work.
 
 ### Engineering quality gates (all green)
 
 - `npx tsc --noEmit` → 0 errors (TypeScript strict)
 - `npm run lint` → 0 errors
-- `npx vitest run` → 63 tests pass
-- `npm run build` → success (7 static routes)
-- `npx playwright test` → 4 e2e tests pass (full demo path + export download + QA render/no-console-error + theme)
+- `npx vitest run` → 75 tests pass
+- `npm run build` → success (10 static routes)
+- `npx playwright test` → 12 e2e tests pass (demo path + exports + QA render/no-console-error + theme + responsive + accessibility baseline)
 - Clean install verified (fresh clone → install → build → tests)
 - Secret scan clean; no env/pem/credential files tracked
 
@@ -79,7 +85,6 @@ G-2 NPV, G-3 regulatory screening, G-4 exit cost, G-11 brand value, G-15 recency
 - Counterparty ZOPA/BATNA estimation + walk-away relative to the pipeline marginal bar.
 - Renewal valued as a real option; SOV decomposed (expand/abandon/wait).
 - Value-split view: "if it creates $35M, what does each structure imply for us vs partner?"
-- Multi-opportunity portfolio: add a 2nd synthetic case to exercise portfolio-level views.
 
 ### v1.2 — Persistence & collaboration
 
@@ -101,7 +106,7 @@ G-2 NPV, G-3 regulatory screening, G-4 exit cost, G-11 brand value, G-15 recency
 - Public web deployment (no auth in MVP; auth when it stops being a portfolio demo).
 - Cross-deal benchmarking: realized-value tracking updates the comparable library.
 - Enterprise integrations (CRM / contract management) as exports/imports, not live sync.
-- Accessibility (WCAG 2.2) and audit-trail attestation for regulated use.
+- Audit-trail attestation for regulated use. (A WCAG 2.2 AA baseline shipped in round 2; a formal audit and full compliance pass remain future work.)
 
 ---
 

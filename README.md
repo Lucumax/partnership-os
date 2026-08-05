@@ -34,15 +34,45 @@ The full specification package lives in [`spec/`](spec/) and is the build contra
 ## Stack
 
 Next.js 16 (App Router), TypeScript strict, Tailwind CSS, shadcn/ui, Recharts, Zod, Vitest,
-Playwright. Local JSON fixtures; optional AI-assistant interface is disabled by default and
-requires feature flags + credentials.
+Playwright. Local JSON fixtures; every route is statically prerendered at build time.
+
+The app includes a typed `PartnershipAnalysisAssistant` interface and a deterministic
+fixture implementation that drives the `AI draft` labels in the UI. The live (Claude)
+implementation is a **typed stub**: even when the feature flags and an API key are
+configured, its methods throw `NOT_IMPLEMENTED`, and no page or component calls
+`getAssistant()` at all. Live AI is a deliberate demo boundary, not a switch that can be
+flipped on by setting flags.
 
 ## Status
 
-Phase 0 scaffold complete. See `docs/VALUATION_RECONCILIATION.md` for the seeded-case math.
+A six-case portfolio on current-dated synthetic fixtures (analysis date 2026-07-30). One
+case — Atlas Knowledge Systems — is modeled end-to-end (intake, valuation workbench,
+negotiation brief, decision history). The other five populate portfolio-level views only
+(the dashboard, the `/opportunities` index, and the portfolio charts); all names and
+numbers are fictional. See `docs/VALUATION_RECONCILIATION.md` for the seeded-case math.
 
 ## Roadmap
 
 MVP v1.0 shipped (walkthrough-ready): see [`ROADMAP.md`](ROADMAP.md) for what's delivered,
-what's deferred to v1.1, and the future direction. Screenshots of all six primary screens
-live in [`docs/screenshots/`](docs/screenshots/).
+what's deferred to v1.1, and the future direction.
+
+## Screenshots
+
+All seven primary screens, captured at 1440×900 with 2× pixel density against the
+production build:
+
+| Screen | File |
+|---|---|
+| Portfolio dashboard | [`docs/screenshots/01-dashboard.png`](docs/screenshots/01-dashboard.png) |
+| Opportunities index | [`docs/screenshots/02-opportunities.png`](docs/screenshots/02-opportunities.png) |
+| Atlas opportunity overview | [`docs/screenshots/03-overview.png`](docs/screenshots/03-overview.png) |
+| Valuation workbench | [`docs/screenshots/04-valuation.png`](docs/screenshots/04-valuation.png) |
+| Comparable library | [`docs/screenshots/05-comparables.png`](docs/screenshots/05-comparables.png) |
+| Negotiation brief | [`docs/screenshots/06-negotiation.png`](docs/screenshots/06-negotiation.png) |
+| Audit & decision history | [`docs/screenshots/07-audit.png`](docs/screenshots/07-audit.png) |
+
+Regenerate them after UI changes with:
+
+```bash
+node scripts/capture-screenshots.mjs
+```
