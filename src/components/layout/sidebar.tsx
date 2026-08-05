@@ -21,7 +21,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/", icon: LayoutDashboard },
-  { label: "Opportunities", href: "/opportunities/atlas", icon: FolderKanban },
+  { label: "Opportunities", href: "/opportunities", icon: FolderKanban },
   { label: "Comparables", href: "/comparables", icon: Scale },
   { label: "Decision Briefs", href: "/opportunities/atlas/negotiation", icon: FileCheck },
   { label: "Audit", href: "/opportunities/atlas/audit", icon: ShieldCheck },
