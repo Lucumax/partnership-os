@@ -55,9 +55,9 @@ export function ValueVsSpendScatter({ data, maxUsd }: ValueVsSpendScatterProps) 
               return (
                 <div className="rounded-md border bg-background px-3 py-2 text-xs shadow-sm">
                   <div className="font-medium">{datum.name}</div>
-                  <div>Spend {fmt(datum.spendUsd)}</div>
-                  <div>Value {fmt(datum.valueUsd)}</div>
-                  <div>Gap {fmt(datum.gapUsd)}</div>
+                  <div>Proposed spend {fmt(datum.spendUsd)}</div>
+                  <div>Confidence-adjusted value (CAV) {fmt(datum.valueUsd)}</div>
+                  <div>Gap vs spend {fmt(datum.gapUsd)}</div>
                 </div>
               );
             }}

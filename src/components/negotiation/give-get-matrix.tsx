@@ -28,9 +28,7 @@ export function GiveGetMatrix({ rows, base, upside }: GiveGetMatrixProps) {
     <Card className="h-full">
       <CardHeader>
         <CardTitle>Give / get matrix</CardTitle>
-        <CardDescription>
-          Seeded trade options with derived economic, strategic, and risk effects
-        </CardDescription>
+        <CardDescription>Trades to put on the table and what each one changes</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
@@ -58,8 +56,8 @@ export function GiveGetMatrix({ rows, base, upside }: GiveGetMatrixProps) {
           </TableBody>
         </Table>
         <p className="mt-3 text-xs text-muted-foreground">
-          Economic impact is a deterministic share of the upside headroom (
-          {formatUsdM(upside.confidenceAdjustedValueUsd)} vs{" "}
+          Economic impact is a fixed share of the headroom between the base and upside scenarios
+          ({formatUsdM(upside.confidenceAdjustedValueUsd)} vs{" "}
           {formatUsdM(base.confidenceAdjustedValueUsd)}).
         </p>
       </CardContent>

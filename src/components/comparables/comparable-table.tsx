@@ -197,7 +197,7 @@ function RecencyPanel({ row }: { row: ComparableRow }) {
   const decayed = output.recencyDecayFactor < 1;
   return (
     <div className="flex flex-col gap-1">
-      <h4 className="text-xs font-medium text-muted-foreground uppercase">Recency (G-15)</h4>
+      <h4 className="text-xs font-medium text-muted-foreground uppercase">Recency decay</h4>
       <p className="text-xs">
         Announced {fmtDate(comparable.announcementDate)} · {Math.round(months)} months before
         analysis.
@@ -257,7 +257,8 @@ export function ComparableTable({ rows }: ComparableTableProps) {
   if (rows.length === 0) {
     return (
       <div className="flex flex-col items-center gap-1 py-12 text-sm text-muted-foreground">
-        <p>No comparables match the current filters.</p>
+        <p>No comparables match these filters.</p>
+        <p>Loosen a filter to bring the market evidence back.</p>
       </div>
     );
   }
@@ -272,8 +273,8 @@ export function ComparableTable({ rows }: ComparableTableProps) {
           <TableHead>Exclusivity</TableHead>
           <TableHead className="text-right">Source</TableHead>
           <TableHead className="text-right">Value</TableHead>
-          <TableHead className="text-right">Score</TableHead>
-          <TableHead className="text-right">Adjusted</TableHead>
+          <TableHead className="text-right">Raw score</TableHead>
+          <TableHead className="text-right">Adjusted score</TableHead>
           <TableHead className="text-right">Decay</TableHead>
           <TableHead className="w-10" />
         </TableRow>

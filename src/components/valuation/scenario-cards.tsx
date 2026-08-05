@@ -41,11 +41,11 @@ export function ScenarioCards({ valuation }: { valuation: ValuationResult }) {
                 <div className="text-2xl font-semibold tracking-tight tabular-nums">
                   {fmtMoney(scenario.confidenceAdjustedValueUsd)}
                 </div>
-                <div className="text-xs text-muted-foreground">Confidence-adjusted value</div>
+                <div className="text-xs text-muted-foreground">Confidence-adjusted value (CAV)</div>
               </div>
               <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
                 <div className="flex flex-col">
-                  <span className="text-muted-foreground">Gross value</span>
+                  <span className="text-muted-foreground">Gross value (GPV)</span>
                   <span className="tabular-nums">{fmtMoney(scenario.grossPartnershipValueUsd)}</span>
                 </div>
                 <div className="flex flex-col">
@@ -57,7 +57,7 @@ export function ScenarioCards({ valuation }: { valuation: ValuationResult }) {
                   <span className="tabular-nums">{fmtPayback(scenario.paybackMonths)}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-muted-foreground">Gap vs proposed</span>
+                  <span className="text-muted-foreground">Gap vs proposed cost</span>
                   <span className={gap >= 0 ? "tabular-nums" : "text-destructive tabular-nums"}>
                     {fmtSignedMoney(gap)}
                   </span>

@@ -47,8 +47,8 @@ export function ValueRangeChart({ data, costUsd, maxUsd }: ValueRangeChartProps)
               return (
                 <div className="rounded-md border bg-background px-3 py-2 text-xs shadow-sm">
                   <div className="font-medium">{label}</div>
-                  <div>Gross value {fmt(datum.grossValueUsd)}</div>
-                  <div>Confidence-adjusted {fmt(datum.adjustedValueUsd)}</div>
+                  <div>Gross value (GPV) {fmt(datum.grossValueUsd)}</div>
+                  <div>Confidence-adjusted (CAV) {fmt(datum.adjustedValueUsd)}</div>
                   <div>Gap vs cost {fmt(datum.gapUsd)}</div>
                 </div>
               );
@@ -66,8 +66,8 @@ export function ValueRangeChart({ data, costUsd, maxUsd }: ValueRangeChartProps)
               fontSize: 11,
             }}
           />
-          <Bar dataKey="grossValueUsd" name="Gross value" fill="var(--chart-2)" radius={[2, 2, 0, 0]} />
-          <Bar dataKey="adjustedValueUsd" name="Confidence-adjusted" fill="var(--chart-4)" radius={[2, 2, 0, 0]} />
+          <Bar dataKey="grossValueUsd" name="Gross value (GPV)" fill="var(--chart-2)" radius={[2, 2, 0, 0]} />
+          <Bar dataKey="adjustedValueUsd" name="Confidence-adjusted (CAV)" fill="var(--chart-4)" radius={[2, 2, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

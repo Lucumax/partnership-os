@@ -44,7 +44,7 @@ import { computeValuation } from "@/lib/valuation/engine";
 
 export const metadata: Metadata = {
   title: "Atlas Knowledge Systems — Opportunity Overview — Partnership OS",
-  description: "Valuation, recommendation, and diligence state for the Atlas Knowledge Systems case.",
+  description: "Decide whether to sign the Atlas partnership — economics, recommendation, and what still needs evidence.",
 };
 
 interface SensitivityRow {
@@ -156,7 +156,7 @@ export default function OpportunityOverviewPage() {
       emphasis: true,
     },
     {
-      label: "NPV of cash cost (12%)",
+      label: "Net present value (NPV) of cash cost (12%)",
       value: formatM(valuation.npvCashCostUsd),
     },
   ];
@@ -181,6 +181,11 @@ export default function OpportunityOverviewPage() {
           <Badge variant="secondary">Stage {stageLabel(opportunity.stage)}</Badge>
           <Badge variant="secondary">Archetype {archetypeLabel(opportunity.archetype)}</Badge>
         </div>
+        <p className="max-w-3xl text-sm text-muted-foreground">
+          Should we sign this partnership? Start here: weigh the proposed cost against
+          confidence-adjusted value (CAV) across three scenarios, then check what still needs
+          evidence before you commit.
+        </p>
         <OpportunityTabs />
       </div>
 
@@ -189,16 +194,15 @@ export default function OpportunityOverviewPage() {
           <Card>
             <CardHeader>
               <CardTitle>Opportunity summary</CardTitle>
-              <CardDescription>Synthetic demonstration case</CardDescription>
+              <CardDescription>Synthetic demo case — what is on the table and where it stands</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
               <p className="text-sm leading-relaxed text-muted-foreground">
-                Atlas is a fictional specialist-information provider with a high-quality
-                proprietary corpus, an API used by professional-services firms, strong editorial
-                processes, and limited global distribution. The proposal is a three-year hybrid
-                partnership combining an annual data-license payment, API access, product
-                integration, joint enterprise distribution, limited category exclusivity, and a
-                minimum annual usage commitment.
+                Atlas is a fictional specialist-information provider: a strong proprietary corpus,
+                an API used by professional-services firms, solid editorial processes, and limited
+                global distribution. The proposal is a three-year hybrid partnership — an annual
+                data-license fee plus API access, product integration, joint enterprise
+                distribution, limited category exclusivity, and a minimum usage commitment.
               </p>
               <dl className="grid grid-cols-1 gap-x-8 gap-y-2 text-sm sm:grid-cols-2">
                 <div className="flex justify-between gap-4">
@@ -228,7 +232,7 @@ export default function OpportunityOverviewPage() {
           <Card>
             <CardHeader>
               <CardTitle>Proposed economics</CardTitle>
-              <CardDescription>Term sheet and derived economic cost</CardDescription>
+              <CardDescription>What the deal would cost over its term</CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
@@ -261,7 +265,7 @@ export default function OpportunityOverviewPage() {
           {recommendation ? (
             <Card>
               <CardHeader>
-                <CardTitle>Current recommendation</CardTitle>
+                <CardTitle>Our current recommendation</CardTitle>
                 <CardDescription>
                   Deterministic engine output ·{" "}
                   <span className="inline-flex items-center gap-1">
@@ -329,7 +333,9 @@ export default function OpportunityOverviewPage() {
             <CardHeader>
               <CardTitle>Value range</CardTitle>
               <CardDescription>
-                Gross and confidence-adjusted value across scenarios vs proposed cost
+                Gross partnership value (GPV) vs confidence-adjusted value (CAV) per scenario,
+                against the {formatM(totalEconomicCostUsd)} proposed cost. Only the upside
+                scenario pays for itself — the base and downside cases fall short.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
@@ -384,7 +390,8 @@ export default function OpportunityOverviewPage() {
             <CardHeader>
               <CardTitle>Top sensitivities</CardTitle>
               <CardDescription>
-                Assumptions with the widest scenario spread and qualitative drivers
+                Which assumptions move the answer most — where better evidence would change the
+                recommendation
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -446,7 +453,7 @@ export default function OpportunityOverviewPage() {
           <Card>
             <CardHeader>
               <CardTitle>Confidence score</CardTitle>
-              <CardDescription>Base-case confidence factor</CardDescription>
+              <CardDescription>How much we trust the base estimate</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
               <div className="flex items-baseline gap-2">
@@ -454,7 +461,7 @@ export default function OpportunityOverviewPage() {
                   {formatPercent(base.confidenceFactor)}
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  mean of 5 dimensions
+                  average of five dimensions
                 </span>
               </div>
               <div className="flex flex-col gap-2.5">
@@ -478,10 +485,8 @@ export default function OpportunityOverviewPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Open questions</CardTitle>
-              <CardDescription>
-                Missing evidence before a firm recommendation
-              </CardDescription>
+              <CardTitle>What still needs evidence</CardTitle>
+              <CardDescription>Evidence that could move the recommendation</CardDescription>
             </CardHeader>
             <CardContent>
               {recommendation && recommendation.missingEvidence.length > 0 ? (
@@ -498,8 +503,8 @@ export default function OpportunityOverviewPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>High risks</CardTitle>
-              <CardDescription>High or critical severity, all currently open</CardDescription>
+              <CardTitle>What could hurt the case</CardTitle>
+              <CardDescription>High- and critical-severity risks, all still open</CardDescription>
             </CardHeader>
             <CardContent>
               {highRisks.length > 0 ? (
@@ -534,7 +539,7 @@ export default function OpportunityOverviewPage() {
           <Card>
             <CardHeader>
               <CardTitle>Approval status</CardTitle>
-              <CardDescription>Human gates completed and pending</CardDescription>
+              <CardDescription>Who has signed off, and what is still pending</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">
               {opportunity.approvals.length > 0 ? (

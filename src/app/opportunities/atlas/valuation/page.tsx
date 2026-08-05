@@ -69,10 +69,13 @@ export default function ValuationPage() {
           <Badge variant="outline">Hybrid</Badge>
         </div>
         <p className="max-w-3xl text-sm text-muted-foreground">
-          Confidence-adjusted value recomputed live from the editable assumptions below. Base case:{" "}
-          gross {fmtMoney(base.grossPartnershipValueUsd)} · CAV {fmtMoney(base.confidenceAdjustedValueUsd)} ·
-          gap {fmtSignedMoney(valuation.gapUsd.base)}. NPV of cash cost {fmtMoneyPrecise(valuation.npvCashCostUsd)} at{" "}
-          {fmtPct(valuation.discountRate)} vs {fmtMoney(valuation.nominalCashCostUsd)} nominal.
+          How much is this deal worth once confidence and risk are priced in? Edit any assumption
+          below and every figure on this screen recomputes instantly. Base scenario: gross
+          partnership value (GPV) {fmtMoney(base.grossPartnershipValueUsd)} · confidence-adjusted
+          value (CAV) {fmtMoney(base.confidenceAdjustedValueUsd)} · gap{" "}
+          {fmtSignedMoney(valuation.gapUsd.base)}. Net present value (NPV) of cash cost{" "}
+          {fmtMoneyPrecise(valuation.npvCashCostUsd)} at {fmtPct(valuation.discountRate)} vs{" "}
+          {fmtMoney(valuation.nominalCashCostUsd)} nominal.
         </p>
       </div>
 
@@ -84,7 +87,8 @@ export default function ValuationPage() {
             <CardHeader>
               <CardTitle>Assumptions</CardTitle>
               <CardDescription>
-                Edit downside / base / upside values to recompute the engine live.
+                Stress-test the deal: edit downside, base, or upside values and the valuation
+                recomputes instantly.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -104,7 +108,7 @@ export default function ValuationPage() {
         <strong>Sources &amp; basis:</strong> all figures are deterministic outputs of the seeded
         synthetic Atlas case (source type: synthetic). Confidence factor is the equal-weight mean of
         five dimensions; NPV applies a {fmtPct(valuation.discountRate)} discount rate to the contract
-        cash schedule only (G-2). Sensitivities are ±10% on the top assumptions. No live AI — engine
+        cash schedule only. Sensitivities are ±10% on the top assumptions. No live AI — engine
         is fixture-backed.
       </footer>
     </div>

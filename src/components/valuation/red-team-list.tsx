@@ -11,7 +11,7 @@ export function RedTeamList({ risks }: { risks: RiskItem[] }) {
         <CardTitle className="flex items-center gap-1.5">
           <ShieldAlert className="size-3.5" /> Red-team flags
         </CardTitle>
-        <CardDescription>Open risks surfaced as challenges to the base case.</CardDescription>
+        <CardDescription>Risks a skeptic would raise against the deal, priced into the value.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         {risks.map((risk) => {
@@ -28,7 +28,7 @@ export function RedTeamList({ risks }: { risks: RiskItem[] }) {
               <div className="text-xs text-muted-foreground tabular-nums">
                 {RISK_CATEGORY_LABELS[risk.category]} · P {Math.round(risk.probability * 100)}% ×{" "}
                 {fmtMoney(risk.impactUsd ?? 0)} ≈ {fmtMoney(expectedCost)}
-                {risk.regulatoryFlag ? " · G-3 flag" : ""}
+                {risk.regulatoryFlag ? " · regulatory flag" : ""}
               </div>
               {risk.mitigation ? (
                 <p className="text-xs text-muted-foreground">Mitigation: {risk.mitigation}</p>

@@ -32,7 +32,7 @@ import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Decision history — Atlas Knowledge Systems",
-  description: "Audit trail and explainability for the Atlas recommendation.",
+  description: "See how this recommendation was built — every change, approval, and piece of evidence.",
 };
 
 const ARCHETYPE_LABELS: Record<ComparableTransaction["archetype"], string> = {
@@ -87,8 +87,9 @@ export default function AuditPage() {
         </div>
         <h1 className="mt-3 text-2xl font-semibold tracking-tight">Decision history</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {opportunity.name} · audit trail and explainability for the recommendation · owner{" "}
-          {opportunity.owner} · created {formatDate(opportunity.createdAt)}
+          {opportunity.name} · trace how this recommendation was built — every change, every
+          approval, and the evidence behind the numbers. Owner {opportunity.owner} · created{" "}
+          {formatDate(opportunity.createdAt)}
         </p>
       </header>
 
@@ -153,8 +154,8 @@ export default function AuditPage() {
               <div>
                 <p className="text-sm font-medium">4. What is the confidence factor and why?</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Base-case confidence factor is {base.confidenceFactor.toFixed(2)}. Weighted average
-                  of five dimensions:
+                  The base-scenario confidence factor is {base.confidenceFactor.toFixed(2)}, an
+                  average of five dimensions:
                 </p>
                 <Table className="mt-2">
                   <TableBody>
@@ -171,7 +172,7 @@ export default function AuditPage() {
               <div>
                 <p className="text-sm font-medium">5. Which risk costs were included?</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Expected risk cost: downside{" "}
+                  Expected risk cost (ERC): downside{" "}
                   {formatUsdM(valuation.byName.downside.expectedRiskCostUsd)} · base{" "}
                   {formatUsdM(base.expectedRiskCostUsd)} · upside{" "}
                   {formatUsdM(valuation.byName.upside.expectedRiskCostUsd)}.

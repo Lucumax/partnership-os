@@ -46,16 +46,18 @@ export default function ComparablesPage() {
           <Badge variant="outline">Target: Atlas Knowledge Systems</Badge>
         </div>
         <p className="max-w-3xl text-sm text-muted-foreground">
-          Deterministic comparability against the Atlas target — {ARCHETYPE_LABELS[target.archetype]} ·
+          Are we pricing Atlas in line with the market? These {allRows.length} comparables — all
+          synthetic — are the evidence behind the valuation. Each is scored for how comparable it
+          is to the Atlas target ({ARCHETYPE_LABELS[target.archetype]} ·{" "}
           {EXCLUSIVITY_LABELS[target.exclusivity]} exclusivity · {target.termMonths} months ·
-          integration burden {target.integrationBurden}/5. Scores decay with recency after 24 months
-          (G-15). {allRows.length} seeded comparables, all synthetic.
+          integration burden {target.integrationBurden}/5); scores decay with recency after 24
+          months.
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Filters</CardTitle>
+          <CardTitle>Filter the evidence</CardTitle>
           <CardDescription>
             {visibleRows.length} of {allRows.length} comparables shown.
           </CardDescription>
@@ -74,7 +76,7 @@ export default function ComparablesPage() {
       <footer className="evidence-strip">
         <strong>Comparability basis:</strong> weighted score (archetype 25% · rights/exclusivity 20% ·
         economic structure 20% · term/renewal 10% · distribution/usage 10% · integration burden 10% ·
-        source quality 5%). Recency decay applies after 24 months (G-15). All comparables are
+        source quality 5%). Recency decay applies after 24 months. All comparables are
         synthetic fixtures; each carries a source-quality score and normalization note.
       </footer>
     </div>

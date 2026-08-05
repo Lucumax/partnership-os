@@ -10,7 +10,7 @@ export function SensitivityList({ sensitivities }: { sensitivities: Sensitivity[
         <CardTitle className="flex items-center gap-1.5">
           <Gauge className="size-3.5" /> Top sensitivities
         </CardTitle>
-        <CardDescription>±10% on each base assumption; ranked by |Δ CAV|.</CardDescription>
+        <CardDescription>A ±10% swing on these assumptions moves the value most — focus due diligence here.</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         {sensitivities.map((item, index) => (

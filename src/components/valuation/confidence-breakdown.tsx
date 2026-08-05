@@ -38,7 +38,7 @@ export function ConfidenceBreakdown({ valuation }: { valuation: ValuationResult 
         <CardTitle className="flex items-center gap-1.5">
           <ListChecks className="size-3.5" /> Confidence factors
         </CardTitle>
-        <CardDescription>Five equal-weight dimensions; the mean is the confidence factor.</CardDescription>
+        <CardDescription>How much we trust each scenario — five equal-weight dimensions, averaged into the confidence factor.</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>

@@ -258,8 +258,9 @@ export default function ProposalPage() {
           {intakeComplete ? <Badge>Intake complete</Badge> : null}
         </div>
         <p className="max-w-3xl text-sm text-muted-foreground">
-          Two-column intake form for {ATLAS_OPPORTUNITY.name}. The typed ProposalTerms from the
-          fixture is displayed and edited here; changes stay client-side.
+          Capture the terms Atlas actually proposed. Everything below is what the valuation and
+          recommendation are built from, so correct anything that is wrong. Edits stay in your
+          browser — nothing is saved to a server.
         </p>
       </div>
 
@@ -381,7 +382,7 @@ export default function ProposalPage() {
 
           <Section title="Legal and policy flags">
             <div className="flex flex-col gap-1.5">
-              <FieldLabel>Regulatory screening (G-3)</FieldLabel>
+              <FieldLabel>Regulatory screening</FieldLabel>
               <div className="flex flex-col">
                 {REGULATORY_FLAG_KEYS.map((flag) => {
                   const status = draft.regulatoryFlags?.[flag] ?? "not_applicable";
@@ -447,9 +448,9 @@ export default function ProposalPage() {
       {showQuestions ? (
         <Card className="border-dashed">
           <CardHeader>
-            <CardTitle className="text-sm">Diligence questions</CardTitle>
+            <CardTitle className="text-sm">What still needs evidence</CardTitle>
             <CardDescription>
-              Deterministic from the seeded recommendation. No AI at runtime.
+              Auto-generated from the seeded recommendation — no live AI at runtime.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -481,7 +482,7 @@ export default function ProposalPage() {
             <Save className="size-4" /> Save draft
           </Button>
           <Button variant="secondary" onClick={() => setShowQuestions((value) => !value)}>
-            <ListChecks className="size-4" /> Generate diligence questions
+            <ListChecks className="size-4" /> Show diligence questions
           </Button>
           <Button
             variant={intakeComplete ? "secondary" : "default"}

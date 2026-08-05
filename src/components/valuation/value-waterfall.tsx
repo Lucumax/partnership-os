@@ -99,9 +99,10 @@ export function ValueWaterfall({ scenario }: { scenario: Scenario }) {
       <CardHeader>
         <div className="flex items-center justify-between gap-3">
           <div className="flex flex-col gap-1">
-            <CardTitle>Base-case value stack</CardTitle>
+            <CardTitle>How the base value is built</CardTitle>
             <CardDescription>
-              Waterfall of gross value components ($M); ends at gross partnership value.
+              Value components add, costs subtract, and the final bar is gross partnership value
+              (GPV).
             </CardDescription>
           </div>
           <Badge variant="outline">Gross {fmtMoney(scenario.grossPartnershipValueUsd)}</Badge>

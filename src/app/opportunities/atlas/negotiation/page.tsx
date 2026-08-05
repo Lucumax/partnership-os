@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Negotiation brief — Atlas Knowledge Systems",
-  description: "Negotiation position, give/get matrix, and constraints for Atlas.",
+  description: "What to offer, what to accept, and where to walk away on Atlas.",
 };
 
 export default function NegotiationPage() {
@@ -80,6 +80,10 @@ export default function NegotiationPage() {
           {opportunity.name} · {opportunity.archetype.replace(/_/g, " ")} · stage{" "}
           {opportunity.stage} · owner {opportunity.owner}
         </p>
+        <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
+          What should we offer, what would we accept, and where do we walk away? This brief is
+          your anchor for the conversation.
+        </p>
       </header>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
@@ -103,7 +107,7 @@ export default function NegotiationPage() {
           <Card className="h-full">
             <CardHeader>
               <CardTitle>Constraints &amp; evidence</CardTitle>
-              <CardDescription>Red lines, gaps, and partner questions</CardDescription>
+              <CardDescription>What is non-negotiable, what we do not know, and what to ask</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-5">
               <div>
@@ -144,7 +148,7 @@ export default function NegotiationPage() {
               </div>
               <div>
                 <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  Conditions that change the recommendation
+                  What would change the recommendation
                 </p>
                 <ul className="flex flex-col gap-2">
                   {recommendation.changeConditions.map((condition) => (

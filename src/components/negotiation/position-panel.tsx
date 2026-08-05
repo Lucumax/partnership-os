@@ -46,8 +46,8 @@ export function PositionPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Position</CardTitle>
-        <CardDescription>Derived from the deterministic valuation engine</CardDescription>
+        <CardTitle>Where we stand</CardTitle>
+        <CardDescription>Where we open, what we would accept, and where we walk away</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <dl className="flex flex-col gap-3">
