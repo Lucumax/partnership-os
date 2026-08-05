@@ -47,7 +47,7 @@ export function Sidebar() {
           <div className="text-[10px] leading-none text-muted-foreground">Valuation · Negotiation · Governance</div>
         </div>
       </div>
-      <nav className="flex flex-1 flex-col gap-0.5 p-3">
+      <nav aria-label="Primary" className="flex flex-1 flex-col gap-0.5 p-3">
         <div className="px-2.5 pb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           Workspace
         </div>
@@ -58,7 +58,7 @@ export function Sidebar() {
               key={href}
               href={href}
               className={cn(
-                "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors",
+                "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
                 active
                   ? "bg-sidebar-accent text-sidebar-accent-foreground"
                   : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",

@@ -17,7 +17,9 @@ export function PortfolioOnlyBadge() {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger render={<Badge variant="outline" className="text-muted-foreground" />}>
+        <TooltipTrigger
+          render={<Badge variant="outline" className="text-muted-foreground" tabIndex={0} />}
+        >
           Portfolio view only
         </TooltipTrigger>
         <TooltipContent side="top">

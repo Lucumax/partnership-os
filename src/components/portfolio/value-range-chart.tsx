@@ -27,7 +27,16 @@ interface ValueRangeChartProps {
 
 export function ValueRangeChart({ data, costUsd, maxUsd }: ValueRangeChartProps) {
   return (
-    <div className="h-64 w-full">
+    <div
+      className="h-64 w-full"
+      role="img"
+      aria-label={`Gross and confidence-adjusted value by scenario against $${costUsd.toFixed(1)}M cost: ${data
+        .map(
+          (d) =>
+            `${d.scenario} gross $${d.grossValueUsd.toFixed(1)}M, adjusted $${d.adjustedValueUsd.toFixed(1)}M, gap $${d.gapUsd.toFixed(1)}M`,
+        )
+        .join("; ")}.`}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
           <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />

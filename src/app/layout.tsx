@@ -42,11 +42,19 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:text-foreground focus:shadow-lg"
+        >
+          Skip to content
+        </a>
         <div className="flex h-screen overflow-hidden">
           <Sidebar />
           <div className="flex min-w-0 flex-1 flex-col">
             <TopBar />
-            <main className="flex-1 overflow-y-auto">{children}</main>
+            <main id="main" className="flex-1 overflow-y-auto">
+              {children}
+            </main>
           </div>
         </div>
       </body>

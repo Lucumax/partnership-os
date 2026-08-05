@@ -75,7 +75,7 @@ export function AuditTimeline({
               badgeVariants({ variant: approved ? "default" : "outline" }),
             )}
           >
-            <CheckCircle2 className="size-3" />
+            <CheckCircle2 className="size-3" aria-hidden="true" />
             {approved ? "Decision approved" : "Awaiting human approval"}
           </span>
           {approved ? (
@@ -94,7 +94,7 @@ export function AuditTimeline({
             onClick={approveDecision}
             disabled={approved}
           >
-            <ShieldCheck className="size-3.5" />
+            <ShieldCheck className="size-3.5" aria-hidden="true" />
             Approve decision
           </Button>
         </div>
@@ -150,7 +150,7 @@ export function AuditTimeline({
                         "gap-1 text-xs",
                       )}
                     >
-                      <Paperclip className="size-2.5" />
+                      <Paperclip className="size-2.5" aria-hidden="true" />
                       {evidenceId}
                     </span>
                   ))}

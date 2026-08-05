@@ -12,6 +12,7 @@ import {
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -50,6 +51,7 @@ export default function OpportunitiesPage() {
         </CardHeader>
         <CardContent className="p-0 sm:p-0">
           <Table>
+            <TableCaption className="sr-only">Portfolio cases</TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead>Opportunity</TableHead>
@@ -73,7 +75,7 @@ export default function OpportunitiesPage() {
                         <div className="flex flex-col">
                           <Link
                             href={entry.href}
-                            className="inline-flex items-center gap-1 font-medium hover:underline"
+                            className="inline-flex items-center gap-1 font-medium hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                           >
                             {entry.name}
                             <ArrowRight className="size-3" aria-hidden="true" />

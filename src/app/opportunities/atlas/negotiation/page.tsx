@@ -51,7 +51,7 @@ export default function NegotiationPage() {
   const briefJson = toJson(opportunity);
 
   return (
-    <main className="mx-auto max-w-7xl p-6">
+    <div className="mx-auto max-w-7xl p-6">
       <header className="mb-6">
         <div className="flex flex-wrap items-center gap-2">
           <span className={cn(badgeVariants({ variant: "outline" }))}>Synthetic</span>
@@ -175,6 +175,6 @@ export default function NegotiationPage() {
         Last updated {formatDate(opportunity.createdAt)} · exports contain only the current
         synthetic case · no live AI at runtime
       </p>
-    </main>
+    </div>
   );
 }

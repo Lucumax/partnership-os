@@ -206,7 +206,7 @@ function RightsTable({ title, rights, onChange }: RightsTableProps) {
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="text-sm font-medium">{title}</h3>
+      <h2 className="text-sm font-medium">{title}</h2>
       {children}
       <Separator className="my-1" />
     </div>
@@ -247,9 +247,9 @@ export default function ProposalPage() {
       <div className="flex flex-col gap-2">
         <a
           href="/opportunities/atlas"
-          className="inline-flex w-fit items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+          className="inline-flex w-fit items-center gap-1 text-xs text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
-          <ArrowLeft className="size-3" /> Atlas opportunity
+          <ArrowLeft className="size-3" aria-hidden="true" /> Atlas opportunity
         </a>
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-lg font-semibold tracking-tight">Proposal intake</h1>
@@ -479,16 +479,16 @@ export default function ProposalPage() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" onClick={saveDraft}>
-            <Save className="size-4" /> Save draft
+            <Save className="size-4" aria-hidden="true" /> Save draft
           </Button>
           <Button variant="secondary" onClick={() => setShowQuestions((value) => !value)}>
-            <ListChecks className="size-4" /> Show diligence questions
+            <ListChecks className="size-4" aria-hidden="true" /> Show diligence questions
           </Button>
           <Button
             variant={intakeComplete ? "secondary" : "default"}
             onClick={markComplete}
           >
-            <CheckCircle2 className="size-4" />{" "}
+            <CheckCircle2 className="size-4" aria-hidden="true" />{" "}
             {intakeComplete ? "Intake complete" : "Mark intake complete"}
           </Button>
         </div>

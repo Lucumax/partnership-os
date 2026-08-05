@@ -9,7 +9,7 @@ export function RedTeamList({ risks }: { risks: RiskItem[] }) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-1.5">
-          <ShieldAlert className="size-3.5" /> Red-team flags
+          <ShieldAlert className="size-3.5" aria-hidden="true" /> Red-team flags
         </CardTitle>
         <CardDescription>Risks a skeptic would raise against the deal, priced into the value.</CardDescription>
       </CardHeader>

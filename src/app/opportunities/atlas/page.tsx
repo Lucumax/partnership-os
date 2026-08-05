@@ -11,6 +11,7 @@ import {
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -235,7 +236,7 @@ export default function OpportunityOverviewPage() {
               <CardDescription>What the deal would cost over its term</CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
+              <Table aria-label="Proposed economics">
                 <TableBody>
                   {proposedEconomics.map((row) => (
                     <TableRow key={row.label}>
@@ -309,6 +310,7 @@ export default function OpportunityOverviewPage() {
                     Negotiation position
                   </div>
                   <Table>
+                    <TableCaption className="sr-only">Negotiation position</TableCaption>
                     <TableHeader>
                       <TableRow>
                         <TableHead>Anchor</TableHead>
@@ -345,6 +347,7 @@ export default function OpportunityOverviewPage() {
                 maxUsd={valueRangeMaxUsd}
               />
               <Table>
+                <TableCaption className="sr-only">Value range by scenario</TableCaption>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Scenario</TableHead>
@@ -396,6 +399,7 @@ export default function OpportunityOverviewPage() {
             </CardHeader>
             <CardContent>
               <Table>
+                <TableCaption className="sr-only">Top sensitivities</TableCaption>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Assumption</TableHead>
@@ -544,6 +548,7 @@ export default function OpportunityOverviewPage() {
             <CardContent className="flex flex-col gap-3">
               {opportunity.approvals.length > 0 ? (
                 <Table>
+                  <TableCaption className="sr-only">Approval status</TableCaption>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Gate</TableHead>

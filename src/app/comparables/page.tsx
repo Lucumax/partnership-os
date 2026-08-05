@@ -37,9 +37,9 @@ export default function ComparablesPage() {
       <div className="flex flex-col gap-2">
         <a
           href="/opportunities/atlas"
-          className="inline-flex w-fit items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+          className="inline-flex w-fit items-center gap-1 text-xs text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
-          <ArrowLeft className="size-3" /> Atlas opportunity
+          <ArrowLeft className="size-3" aria-hidden="true" /> Atlas opportunity
         </a>
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-lg font-semibold tracking-tight">Comparable library</h1>

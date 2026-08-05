@@ -25,7 +25,16 @@ interface ValueVsSpendScatterProps {
 
 export function ValueVsSpendScatter({ data, maxUsd }: ValueVsSpendScatterProps) {
   return (
-    <div className="h-64 w-full">
+    <div
+      className="h-64 w-full"
+      role="img"
+      aria-label={`Value versus spend for ${data.length} cases: ${data
+        .map(
+          (d) =>
+            `${d.name} spend $${d.spendUsd.toFixed(1)}M, value $${d.valueUsd.toFixed(1)}M, gap $${d.gapUsd.toFixed(1)}M`,
+        )
+        .join("; ")}.`}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <ScatterChart margin={{ top: 8, right: 16, bottom: 8, left: 0 }}>
           <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />

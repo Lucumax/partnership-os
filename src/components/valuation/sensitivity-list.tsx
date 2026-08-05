@@ -8,7 +8,7 @@ export function SensitivityList({ sensitivities }: { sensitivities: Sensitivity[
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-1.5">
-          <Gauge className="size-3.5" /> Top sensitivities
+          <Gauge className="size-3.5" aria-hidden="true" /> Top sensitivities
         </CardTitle>
         <CardDescription>A ±10% swing on these assumptions moves the value most — focus due diligence here.</CardDescription>
       </CardHeader>

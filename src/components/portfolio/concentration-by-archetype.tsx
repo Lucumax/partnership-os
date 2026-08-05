@@ -23,7 +23,13 @@ interface ConcentrationByArchetypeProps {
 
 export function ConcentrationByArchetypeChart({ data, maxValueUsd }: ConcentrationByArchetypeProps) {
   return (
-    <div className="h-40 w-full">
+    <div
+      className="h-40 w-full"
+      role="img"
+      aria-label={`Confidence-adjusted value by archetype: ${data
+        .map((d) => `${d.archetype} $${d.valueUsd.toFixed(1)}M, ${d.share.toFixed(0)}%`)
+        .join(", ")}.`}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} layout="vertical" margin={{ top: 0, right: 24, bottom: 0, left: 0 }}>
           <XAxis

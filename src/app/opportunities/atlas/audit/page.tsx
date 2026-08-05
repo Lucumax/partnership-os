@@ -69,7 +69,7 @@ export default function AuditPage() {
   ];
 
   return (
-    <main className="mx-auto max-w-7xl p-6">
+    <div className="mx-auto max-w-7xl p-6">
       <header className="mb-6">
         <div className="flex flex-wrap items-center gap-2">
           <span className={cn(badgeVariants({ variant: "outline" }))}>Synthetic</span>
@@ -157,7 +157,7 @@ export default function AuditPage() {
                   The base-scenario confidence factor is {base.confidenceFactor.toFixed(2)}, an
                   average of five dimensions:
                 </p>
-                <Table className="mt-2">
+                <Table aria-label="Confidence dimensions" className="mt-2">
                   <TableBody>
                     {confidenceDims.map((dim) => (
                       <TableRow key={dim.key}>
@@ -218,6 +218,6 @@ export default function AuditPage() {
       <div className="mt-4 rounded-xl border bg-card p-4">
         <AuditExports markdown={briefMarkdown} json={briefJson} csv={comparablesCsv} />
       </div>
-    </main>
+    </div>
   );
 }

@@ -109,7 +109,16 @@ export function ValueWaterfall({ scenario }: { scenario: Scenario }) {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="h-72 w-full">
+        <div
+          className="h-72 w-full"
+          role="img"
+          aria-label={`Base scenario value waterfall: ${data
+            .map(
+              (d) =>
+                `${d.label} ${d.kind === "cost" ? "-" : "+"}$${Math.abs(d.delta).toFixed(1)}M, running $${d.running.toFixed(1)}M`,
+            )
+            .join(", ")}.`}
+        >
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} margin={{ top: 24, right: 8, left: 4, bottom: 4 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />

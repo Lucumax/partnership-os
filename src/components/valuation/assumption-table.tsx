@@ -12,6 +12,7 @@ import {
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -39,6 +40,7 @@ interface AssumptionTableProps {
 export function AssumptionTable({ rows, onChange }: AssumptionTableProps) {
   return (
     <Table>
+      <TableCaption className="sr-only">Assumption inputs</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>Variable</TableHead>

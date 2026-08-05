@@ -13,6 +13,7 @@ import {
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -277,6 +278,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <Table>
+              <TableCaption className="sr-only">Upcoming decisions</TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead>Opportunity</TableHead>
@@ -294,7 +296,7 @@ export default function DashboardPage() {
                       {row.modeled && row.href ? (
                         <Link
                           href={row.href}
-                          className="inline-flex items-center gap-1 font-medium hover:underline"
+                          className="inline-flex items-center gap-1 font-medium hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                         >
                           {row.name}
                           <ArrowRight className="size-3" aria-hidden="true" />
@@ -352,6 +354,9 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <Table>
+              <TableCaption className="sr-only">
+                Recent assumption changes for Atlas
+              </TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead>Assumption</TableHead>

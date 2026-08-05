@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -125,7 +126,7 @@ function NormalizationPanel({ row }: { row: ComparableRow }) {
   const { normalizationFactors } = row.comparable;
   return (
     <div className="flex flex-col gap-1">
-      <h4 className="text-xs font-medium text-muted-foreground uppercase">Normalization factors</h4>
+      <h3 className="text-xs font-medium text-muted-foreground uppercase">Normalization factors</h3>
       {normalizationFactors.length === 0 ? (
         <p className="text-xs text-muted-foreground">None recorded.</p>
       ) : (
@@ -154,7 +155,7 @@ function RationalePanel({ row }: { row: ComparableRow }) {
   const rationale = inclusionRationale(comparable, result);
   return (
     <div className="flex flex-col gap-1">
-      <h4 className="text-xs font-medium text-muted-foreground uppercase">Rationale & source</h4>
+      <h3 className="text-xs font-medium text-muted-foreground uppercase">Rationale & source</h3>
       <ul className="list-disc space-y-0.5 pl-4 text-xs text-muted-foreground">
         {rationale.map((point) => (
           <li key={point}>{point}</li>
@@ -178,7 +179,7 @@ function ValueAdjustmentPanel({ row }: { row: ComparableRow }) {
   ];
   return (
     <div className="flex flex-col gap-1">
-      <h4 className="text-xs font-medium text-muted-foreground uppercase">Value adjustments</h4>
+      <h3 className="text-xs font-medium text-muted-foreground uppercase">Value adjustments</h3>
       <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
         {cells.map((cell) => (
           <div key={cell.label} className="flex flex-col">
@@ -197,7 +198,7 @@ function RecencyPanel({ row }: { row: ComparableRow }) {
   const decayed = output.recencyDecayFactor < 1;
   return (
     <div className="flex flex-col gap-1">
-      <h4 className="text-xs font-medium text-muted-foreground uppercase">Recency decay</h4>
+      <h3 className="text-xs font-medium text-muted-foreground uppercase">Recency decay</h3>
       <p className="text-xs">
         Announced {fmtDate(comparable.announcementDate)} · {Math.round(months)} months before
         analysis.
@@ -265,6 +266,7 @@ export function ComparableTable({ rows }: ComparableTableProps) {
 
   return (
     <Table>
+      <TableCaption className="sr-only">Comparable transactions</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead className="min-w-44">Comparable</TableHead>
@@ -331,9 +333,9 @@ export function ComparableTable({ rows }: ComparableTableProps) {
                   }}
                 >
                   {isOpen ? (
-                    <ChevronDown className="size-3.5" />
+                    <ChevronDown className="size-3.5" aria-hidden="true" />
                   ) : (
-                    <ChevronRight className="size-3.5" />
+                    <ChevronRight className="size-3.5" aria-hidden="true" />
                   )}
                 </Button>
               </TableCell>

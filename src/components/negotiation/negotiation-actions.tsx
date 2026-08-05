@@ -32,7 +32,7 @@ export function NegotiationActions({
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
         <Button size="sm" onClick={generateBrief}>
-          <LoaderCircle className="size-3.5" />
+          <LoaderCircle className="size-3.5" aria-hidden="true" />
           Generate brief
         </Button>
         <Button
@@ -40,7 +40,7 @@ export function NegotiationActions({
           variant={approved ? "outline" : "default"}
           onClick={() => setApproved((value) => !value)}
         >
-          <ShieldCheck className="size-3.5" />
+          <ShieldCheck className="size-3.5" aria-hidden="true" />
           {approved ? "Revoke approval" : "Approve brief"}
         </Button>
         <div className="flex flex-wrap gap-2 ml-1">
@@ -51,7 +51,7 @@ export function NegotiationActions({
               downloadBlob("atlas-negotiation-brief.md", markdown, "text/markdown")
             }
           >
-            <Download className="size-3.5" />
+            <Download className="size-3.5" aria-hidden="true" />
             Export Markdown
           </Button>
           <Button
@@ -59,13 +59,13 @@ export function NegotiationActions({
             variant="outline"
             onClick={() => downloadBlob("atlas-opportunity.json", json, "application/json")}
           >
-            <FileJson className="size-3.5" />
+            <FileJson className="size-3.5" aria-hidden="true" />
             Export JSON
           </Button>
         </div>
         <div className="flex items-center gap-2 ml-auto">
           <Badge variant={approved ? "default" : "outline"}>
-            <CheckCircle2 className="size-3" />
+            <CheckCircle2 className="size-3" aria-hidden="true" />
             {approved ? "Brief approved" : "Awaiting approval"}
           </Badge>
         </div>

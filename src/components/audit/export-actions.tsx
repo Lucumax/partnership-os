@@ -19,7 +19,7 @@ export function AuditExports({ markdown, json, csv }: AuditExportsProps) {
         variant="outline"
         onClick={() => downloadBlob("atlas-negotiation-brief.md", markdown, "text/markdown")}
       >
-        <FileText className="size-3.5" />
+        <FileText className="size-3.5" aria-hidden="true" />
         Export Markdown
       </Button>
       <Button
@@ -27,7 +27,7 @@ export function AuditExports({ markdown, json, csv }: AuditExportsProps) {
         variant="outline"
         onClick={() => downloadBlob("atlas-opportunity.json", json, "application/json")}
       >
-        <FileJson className="size-3.5" />
+        <FileJson className="size-3.5" aria-hidden="true" />
         Export JSON
       </Button>
       <Button
@@ -35,11 +35,11 @@ export function AuditExports({ markdown, json, csv }: AuditExportsProps) {
         variant="outline"
         onClick={() => downloadBlob("atlas-comparables.csv", csv, "text/csv")}
       >
-        <FileSpreadsheet className="size-3.5" />
+        <FileSpreadsheet className="size-3.5" aria-hidden="true" />
         Export CSV
       </Button>
       <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
-        <Download className="size-3" />
+        <Download className="size-3" aria-hidden="true" />
         Client-side downloads · synthetic case only
       </span>
     </div>

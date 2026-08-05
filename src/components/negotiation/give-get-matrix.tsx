@@ -8,6 +8,7 @@ import {
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -32,6 +33,7 @@ export function GiveGetMatrix({ rows, base, upside }: GiveGetMatrixProps) {
       </CardHeader>
       <CardContent>
         <Table>
+          <TableCaption className="sr-only">Give / get matrix</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>We give</TableHead>

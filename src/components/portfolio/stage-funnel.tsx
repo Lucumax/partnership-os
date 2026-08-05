@@ -23,7 +23,14 @@ interface StageFunnelChartProps {
 
 export function StageFunnelChart({ data, maxCount }: StageFunnelChartProps) {
   return (
-    <div className="h-56 w-full">
+    <div
+      className="h-56 w-full"
+      role="img"
+      aria-label={`Pipeline by stage: ${data
+        .filter((d) => d.count > 0)
+        .map((d) => `${d.stage} ${d.count}`)
+        .join(", ")}.`}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} layout="vertical" margin={{ top: 0, right: 24, bottom: 0, left: 0 }}>
           <XAxis

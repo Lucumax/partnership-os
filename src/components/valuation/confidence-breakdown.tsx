@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -36,12 +37,13 @@ export function ConfidenceBreakdown({ valuation }: { valuation: ValuationResult 
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-1.5">
-          <ListChecks className="size-3.5" /> Confidence factors
+          <ListChecks className="size-3.5" aria-hidden="true" /> Confidence factors
         </CardTitle>
         <CardDescription>How much we trust each scenario — five equal-weight dimensions, averaged into the confidence factor.</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
+          <TableCaption className="sr-only">Confidence factors by scenario</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Dimension</TableHead>
