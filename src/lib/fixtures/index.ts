@@ -20,3 +20,8 @@ export {
   RISK_UPSIDE_RENEWAL,
 } from "./atlas";
 export type { ArchetypeMeta } from "./atlas";
+export {
+  ATLAS_PORTFOLIO_ENTRY,
+  PORTFOLIO_ENTRIES,
+} from "./portfolio";
+export type { PortfolioEntry } from "./portfolio";

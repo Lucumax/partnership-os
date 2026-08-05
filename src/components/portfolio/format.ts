@@ -6,7 +6,7 @@ export interface FormatMoneyOptions {
 export function formatM(value: number, options?: FormatMoneyOptions): string {
   const dp = options?.dp ?? 1;
   const magnitude = Math.abs(value).toFixed(dp);
-  const prefix = value < 0 ? "-" : options?.sign && value > 0 ? "+" : "";
+  const prefix = value < 0 ? "−" : options?.sign && value > 0 ? "+" : "";
   return `${prefix}$${magnitude}M`;
 }
 

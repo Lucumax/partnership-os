@@ -19,6 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { KpiCard } from "@/components/portfolio/kpi-card";
+import { PortfolioOnlyBadge } from "@/components/portfolio/portfolio-only-badge";
 import { StageFunnelChart, type StageFunnelDatum } from "@/components/portfolio/stage-funnel";
 import {
   ValueVsSpendScatter,
@@ -40,17 +41,17 @@ import {
 import {
   ATLAS_ANALYSIS_DATE,
   ATLAS_OPPORTUNITY,
-  ATLAS_PROPOSAL,
-  ATLAS_SCENARIO_INPUTS,
+  ATLAS_RECOMMENDATION,
   PARTNERSHIP_ARCHETYPES,
+  PORTFOLIO_ENTRIES,
 } from "@/lib/fixtures";
 import type { OpportunityStage } from "@/lib/domain/types";
-import { computeValuation } from "@/lib/valuation/engine";
 import { monthsBetween } from "@/lib/valuation/formulas";
 
 export const metadata: Metadata = {
   title: "Portfolio Dashboard — Partnership OS",
-  description: "Confidence-adjusted view of pipeline value, commitments, and decisions.",
+  description:
+    "Where the partnership pipeline stands, what is on the table, and what needs a decision next.",
 };
 
 const FUNNEL_STAGES: OpportunityStage[] = [
@@ -74,82 +75,88 @@ function roundUpToTens(value: number): number {
 
 export default function DashboardPage() {
   const analysisDate = ATLAS_ANALYSIS_DATE;
-  const opportunity = ATLAS_OPPORTUNITY;
-  const opportunities = [opportunity];
+  const entries = PORTFOLIO_ENTRIES;
+  const atlasEntry = entries.find((entry) => entry.modeled) ?? entries[0];
 
-  const valuation = computeValuation({
-    proposal: ATLAS_PROPOSAL,
-    scenarios: ATLAS_SCENARIO_INPUTS,
-  });
-  const base = valuation.byName.base;
-  const totalEconomicCostUsd = valuation.totalEconomicCostUsd;
-
-  const pipelineValueUsd = opportunities.reduce(
-    (sum) => sum + base.grossPartnershipValueUsd,
+  const pipelineValueUsd = entries.reduce(
+    (sum, entry) => sum + entry.grossValueUsd,
     0,
   );
-  const confidenceAdjustedValueUsd = opportunities.reduce(
-    (sum) => sum + base.confidenceAdjustedValueUsd,
+  const confidenceAdjustedValueUsd = entries.reduce(
+    (sum, entry) => sum + entry.confidenceAdjustedValueUsd,
     0,
   );
-  const proposedSpendUsd = opportunities.reduce(
-    (sum) => sum + totalEconomicCostUsd,
+  const proposedSpendUsd = entries.reduce(
+    (sum, entry) => sum + entry.economicCostUsd,
     0,
   );
-  const activeNegotiations = opportunities.filter(
-    (item) =>
-      item.stage === "valuation" ||
-      item.stage === "negotiation" ||
-      item.stage === "approval",
+  const activeNegotiations = entries.filter(
+    (entry) =>
+      entry.stage === "valuation" ||
+      entry.stage === "negotiation" ||
+      entry.stage === "approval",
   ).length;
-  const decisionsDueIn30Days = opportunities.filter((item) => {
-    if (!item.decisionDate) {
+  const decisionsDueIn30Days = entries.filter((entry) => {
+    if (!entry.decisionDate) {
       return false;
     }
-    const days = daysBetween(analysisDate, item.decisionDate);
+    const days = daysBetween(analysisDate, entry.decisionDate);
     return days >= 0 && days <= 30;
   }).length;
-  const highRiskOpportunities = opportunities.filter((item) =>
-    item.risks.some((risk) => risk.severity === "high" || risk.severity === "critical"),
-  ).length;
+  const highRiskOpportunities = entries.filter((entry) => entry.highRisk).length;
+
+  const upcoming = entries
+    .filter((entry) => entry.decisionDate && daysBetween(analysisDate, entry.decisionDate) >= 0)
+    .sort((a, b) => (a.decisionDate as string).localeCompare(b.decisionDate as string));
+  const soonestDecision = upcoming[0]?.decisionDate;
 
   const funnelData: StageFunnelDatum[] = FUNNEL_STAGES.map((stage) => ({
     stage: stageLabel(stage),
-    count: opportunities.filter((item) => item.stage === stage).length,
-    active: opportunity.stage === stage,
+    count: entries.filter((entry) => entry.stage === stage).length,
+    active: atlasEntry.stage === stage,
   }));
+  const populatedStages = funnelData.filter((datum) => datum.count > 0);
 
-  const scatterData: ValueVsSpendDatum[] = opportunities.map((item) => ({
-    name: item.name,
-    spendUsd: totalEconomicCostUsd,
-    valueUsd: base.confidenceAdjustedValueUsd,
-    gapUsd: base.confidenceAdjustedValueUsd - totalEconomicCostUsd,
+  const scatterData: ValueVsSpendDatum[] = entries.map((entry) => ({
+    name: entry.name,
+    spendUsd: entry.economicCostUsd,
+    valueUsd: entry.confidenceAdjustedValueUsd,
+    gapUsd: entry.confidenceAdjustedValueUsd - entry.economicCostUsd,
   }));
   const scatterMaxUsd = roundUpToTens(
     Math.max(...scatterData.map((datum) => Math.max(datum.spendUsd, datum.valueUsd))),
   );
+  const dealsThatPayForThemselves = scatterData.filter((datum) => datum.gapUsd >= 0).length;
 
   const concentrationData: ConcentrationDatum[] = PARTNERSHIP_ARCHETYPES.map((meta) => {
-    const valueUsd = opportunities
-      .filter((item) => item.archetype === meta.id)
-      .reduce((sum) => sum + base.confidenceAdjustedValueUsd, 0);
+    const valueUsd = entries
+      .filter((entry) => entry.archetype === meta.id)
+      .reduce((sum, entry) => sum + entry.confidenceAdjustedValueUsd, 0);
     return {
       archetype: meta.label,
       valueUsd,
       share: confidenceAdjustedValueUsd > 0 ? (valueUsd / confidenceAdjustedValueUsd) * 100 : 0,
     };
   }).filter((datum) => datum.valueUsd > 0);
-  const concentrationMaxUsd = roundUpToTens(confidenceAdjustedValueUsd);
+  const concentrationMaxUsd = roundUpToTens(
+    Math.max(...concentrationData.map((datum) => datum.valueUsd)),
+  );
+  const topArchetype = concentrationData.reduce((largest, datum) =>
+    datum.valueUsd > largest.valueUsd ? datum : largest,
+  );
 
-  const upcomingDecisions = opportunities
-    .filter((item) => item.decisionDate)
-    .map((item) => ({
-      name: item.name,
-      decisionDate: item.decisionDate as string,
-      stage: stageLabel(item.stage),
-      recommendation: item.recommendation ? decisionLabel(item.recommendation.decision) : "—",
-      confidenceAdjustedValueUsd: base.confidenceAdjustedValueUsd,
-      gapUsd: base.confidenceAdjustedValueUsd - totalEconomicCostUsd,
+  const upcomingDecisions = entries
+    .filter((entry) => entry.decisionDate)
+    .map((entry) => ({
+      id: entry.id,
+      name: entry.name,
+      modeled: entry.modeled,
+      href: entry.href,
+      decisionDate: entry.decisionDate as string,
+      stage: stageLabel(entry.stage),
+      recommendation: entry.modeled ? decisionLabel(ATLAS_RECOMMENDATION.decision) : "—",
+      confidenceAdjustedValueUsd: entry.confidenceAdjustedValueUsd,
+      gapUsd: entry.confidenceAdjustedValueUsd - entry.economicCostUsd,
     }))
     .sort((a, b) => a.decisionDate.localeCompare(b.decisionDate));
 
@@ -157,7 +164,7 @@ export default function DashboardPage() {
     string,
     { previousValue: unknown; newValue: unknown; timestamp: string; actor: string }
   >();
-  for (const event of opportunity.auditEvents) {
+  for (const event of ATLAS_OPPORTUNITY.auditEvents) {
     if (event.action !== "assumption.updated") {
       continue;
     }
@@ -170,7 +177,7 @@ export default function DashboardPage() {
     });
   }
 
-  const recentAssumptions = [...opportunity.assumptions]
+  const recentAssumptions = [...ATLAS_OPPORTUNITY.assumptions]
     .sort((a, b) => b.lastUpdatedAt.localeCompare(a.lastUpdatedAt))
     .map((assumption) => {
       const slug = assumption.id.replace("assumption-", "");
@@ -184,8 +191,13 @@ export default function DashboardPage() {
         <h1 className="font-heading text-xl font-semibold tracking-tight">
           Partnership portfolio
         </h1>
-        <p className="text-sm text-muted-foreground">
-          Confidence-adjusted view of pipeline value, commitments, and decisions.
+        <p className="max-w-3xl text-sm text-muted-foreground">
+          Start here: see where the pipeline stands, which deals would pay for themselves,
+          and what needs a decision next.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Only Atlas Knowledge Systems is modeled end-to-end in this demo. The other five
+          cases populate portfolio-level views — all names and numbers are fictional.
         </p>
       </div>
 
@@ -193,36 +205,40 @@ export default function DashboardPage() {
         <KpiCard
           label="Pipeline value"
           value={formatM(pipelineValueUsd)}
-          caption="Base-case gross value"
+          caption="sum of gross partnership value (GPV)"
         />
         <KpiCard
           label="Confidence-adjusted value"
           value={formatM(confidenceAdjustedValueUsd)}
-          caption="Base-case CAV"
+          caption="risk-discounted across six cases"
         />
         <KpiCard
           label="Proposed spend"
           value={formatM(proposedSpendUsd)}
-          caption="Total economic cost"
+          caption="total economic cost across cases"
         />
-        <KpiCard label="Active negotiations" value={activeNegotiations} caption="Valuation → approval" />
+        <KpiCard
+          label="Active negotiations"
+          value={activeNegotiations}
+          caption="Valuation → approval stages"
+        />
         <KpiCard
           label="Decisions due in 30 days"
           value={decisionsDueIn30Days}
           caption={
-            opportunity.decisionDate
-              ? `Next ${formatDate(opportunity.decisionDate)}`
-              : "None scheduled"
+            soonestDecision ? `Next ${formatDate(soonestDecision)}` : "None scheduled"
           }
         />
-        <KpiCard label="High-risk opportunities" value={highRiskOpportunities} caption="High or critical" />
+        <KpiCard label="High-risk opportunities" value={highRiskOpportunities} caption="high or critical risk" />
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         <Card className="lg:col-span-5">
           <CardHeader>
-            <CardTitle>Stage funnel</CardTitle>
-            <CardDescription>Opportunity count by pipeline stage</CardDescription>
+            <CardTitle>Pipeline by stage</CardTitle>
+            <CardDescription>
+              Six cases, each in a different stage — the funnel is populated end to end.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <StageFunnelChart
@@ -230,7 +246,9 @@ export default function DashboardPage() {
               maxCount={Math.max(...funnelData.map((datum) => datum.count), 1)}
             />
             <p className="mt-2 text-xs text-muted-foreground">
-              Single seeded case ({opportunity.name}) currently in {stageLabel(opportunity.stage)}.
+              {populatedStages.length === 1
+                ? `One case, in ${populatedStages[0].stage}.`
+                : `${entries.length} cases across ${populatedStages.length} stages, from inbound through declined — one per stage.`}
             </p>
           </CardContent>
         </Card>
@@ -239,13 +257,15 @@ export default function DashboardPage() {
           <CardHeader>
             <CardTitle>Value versus spend</CardTitle>
             <CardDescription>
-              Base-case confidence-adjusted value vs proposed economic cost
+              Confidence-adjusted value (CAV) against proposed economic cost, per case.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <ValueVsSpendScatter data={scatterData} maxUsd={scatterMaxUsd} />
             <p className="mt-2 text-xs text-muted-foreground">
-              Dashed line marks value = spend (break-even). Points below it carry a negative gap.
+              {dealsThatPayForThemselves} of {scatterData.length} cases land above the
+              dashed break-even line and pay for themselves at their proposed cost. The
+              others — including Atlas and the case we declined — fall short.
             </p>
           </CardContent>
         </Card>
@@ -253,7 +273,7 @@ export default function DashboardPage() {
         <Card className="lg:col-span-7">
           <CardHeader>
             <CardTitle>Upcoming decisions</CardTitle>
-            <CardDescription>Decision dates across the portfolio</CardDescription>
+            <CardDescription>What needs a decision soonest, across the portfolio</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -269,15 +289,22 @@ export default function DashboardPage() {
               </TableHeader>
               <TableBody>
                 {upcomingDecisions.map((row) => (
-                  <TableRow key={row.name}>
+                  <TableRow key={row.id}>
                     <TableCell>
-                      <Link
-                        href="/opportunities/atlas"
-                        className="inline-flex items-center gap-1 font-medium hover:underline"
-                      >
-                        {row.name}
-                        <ArrowRight className="size-3" aria-hidden="true" />
-                      </Link>
+                      {row.modeled && row.href ? (
+                        <Link
+                          href={row.href}
+                          className="inline-flex items-center gap-1 font-medium hover:underline"
+                        >
+                          {row.name}
+                          <ArrowRight className="size-3" aria-hidden="true" />
+                        </Link>
+                      ) : (
+                        <span className="inline-flex flex-wrap items-center gap-1.5">
+                          <span className="font-medium">{row.name}</span>
+                          <PortfolioOnlyBadge />
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell>{formatDate(row.decisionDate)}</TableCell>
                     <TableCell>{row.stage}</TableCell>
@@ -304,22 +331,24 @@ export default function DashboardPage() {
         <Card className="lg:col-span-5">
           <CardHeader>
             <CardTitle>Concentration by archetype</CardTitle>
-            <CardDescription>Confidence-adjusted value by partnership archetype</CardDescription>
+            <CardDescription>Share of portfolio CAV held by each partnership archetype</CardDescription>
           </CardHeader>
           <CardContent>
             <ConcentrationByArchetypeChart data={concentrationData} maxValueUsd={concentrationMaxUsd} />
             <p className="mt-2 text-xs text-muted-foreground">
-              {concentrationData.length === 1
-                ? "Portfolio is 100% concentrated in one archetype until additional cases are seeded."
-                : "Archetype mix across the portfolio."}
+              {topArchetype.archetype} is the largest bucket at{" "}
+              {topArchetype.share.toFixed(0)}% of portfolio confidence-adjusted value —
+              real concentration risk to watch, not a single 100% bar.
             </p>
           </CardContent>
         </Card>
 
         <Card className="lg:col-span-12">
           <CardHeader>
-            <CardTitle>Recent assumption changes</CardTitle>
-            <CardDescription>Most recently updated assumptions driving valuation</CardDescription>
+            <CardTitle>Atlas — recent assumption changes</CardTitle>
+            <CardDescription>
+              The modeled case&apos;s most recently updated assumptions and what drove them
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
