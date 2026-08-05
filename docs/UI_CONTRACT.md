@@ -3,6 +3,24 @@
 All four UI tracks build against this contract. It is derived from `spec/04_UI_WIREFRAME.md`
 and `spec/08_BUILD_PROMPT_V4_FLASH.md`, plus the shared engine in `src/lib`.
 
+## Round 2 reconciliation (credible-portfolio build)
+
+Added retroactively in round 2 to record how the shipped app diverges from this contract.
+The historical contract text below is preserved as-is; this section supersedes it where they
+conflict.
+
+- **(a)** The `/opportunities` portfolio index route was added in round 1 and now belongs to
+  Track A (`src/app/opportunities/page.tsx`).
+- **(b)** Portfolio-level data now comes from `src/lib/fixtures/portfolio.ts`
+  (`PORTFOLIO_ENTRIES` / `PortfolioEntry`) in addition to the Atlas fixtures in
+  `src/lib/fixtures/atlas.ts`; `src/lib/fixtures/index.ts` re-exports both.
+- **(c)** The exported fixture names use the UPPERCASE convention (`ATLAS_OPPORTUNITY`,
+  `ATLAS_COMPARABLES`, `PORTFOLIO_ENTRIES`, …) rather than the camelCase listed under
+  "Key exports" below; that list has been corrected.
+- **(d)** Screenshots under `docs/screenshots/` were regenerated in round 2. The old
+  "each track produces its own screenshots" instruction below is superseded by
+  `scripts/capture-screenshots.mjs`.
+
 ## Tech and conventions
 
 - Next.js 16 App Router, TypeScript strict, Tailwind v4 (globals.css), shadcn/ui (already in
@@ -22,10 +40,11 @@ Everything reads from `src/lib/fixtures/index.ts` (the seeded Atlas case) and th
 `src/lib/valuation/engine.ts`. Do NOT hardcode seeded numbers in UI; import from fixtures and
 run the engine.
 
-Key exports (verify against `src/lib/domain/types.ts`):
-- `atlasOpportunity` (Opportunity)
-- `atlasComparables` (ComparableTransaction[])
-- `archetypes` (labels for the 5 archetypes)
+Key exports (verify against `src/lib/fixtures/index.ts` and `src/lib/domain/types.ts`):
+- `ATLAS_OPPORTUNITY` (Opportunity)
+- `ATLAS_COMPARABLES` (ComparableTransaction[])
+- `PARTNERSHIP_ARCHETYPES` (labels for the 5 archetypes)
+- `PORTFOLIO_ENTRIES` / `ATLAS_PORTFOLIO_ENTRY` (PortfolioEntry / PortfolioEntry[])
 - engine: `computeValuation`, `computeRecommendation`, `computeComparability`
 
 ## Routes (exact, from spec §8)
