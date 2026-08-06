@@ -26,22 +26,22 @@ export function PositionPanel({
     {
       label: "Opening position",
       value: formatUsdM(recommendation.openingPositionUsd),
-      hint: "Downside CAV",
+      hint: "Downside-case value (present terms) — the lowest number we can defend",
     },
     {
       label: "Target",
       value: formatUsdM(recommendation.targetValueUsd),
-      hint: "Midpoint base–upside",
+      hint: "Midpoint of opening and reservation",
     },
     {
       label: "Reservation value",
       value: formatUsdM(recommendation.reservationValueUsd),
-      hint: "Base CAV",
+      hint: "Value ceiling — base-case value (present terms); do not pay more than this",
     },
     {
-      label: "Walk-away point",
+      label: "Walk-away threshold",
       value: formatUsdM(recommendation.walkAwayValueUsd),
-      hint: "Upside CAV",
+      hint: "Same ceiling in nominal cash terms — walk if the ask exceeds it",
     },
   ];
 
@@ -49,7 +49,10 @@ export function PositionPanel({
     <Card>
       <CardHeader>
         <CardTitle>Where we stand</CardTitle>
-        <CardDescription>Where we open, what we would accept, and where we walk away</CardDescription>
+        <CardDescription>
+          Positions on price, anchored by value: what we open with, what we accept, and where we
+          walk away
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <dl className="flex flex-col gap-3">

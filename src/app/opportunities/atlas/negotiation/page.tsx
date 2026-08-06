@@ -47,7 +47,7 @@ export default function NegotiationPage() {
   const giveGetRows = deriveGiveGetRows(
     recommendation.giveGetOptions,
     valuation.byName.base,
-    valuation.byName.upside,
+    opportunity.proposal,
   );
   const redLines = deriveRedLines(opportunity, recommendation);
   const partnerQuestions = derivePartnerQuestions(opportunity.proposal);

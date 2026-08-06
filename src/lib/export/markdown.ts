@@ -9,7 +9,7 @@ export function toMarkdown(
   recommendation: Recommendation,
 ): string {
   const base = valuation.byName.base;
-  const rows = deriveGiveGetRows(recommendation.giveGetOptions, base, valuation.byName.upside);
+  const rows = deriveGiveGetRows(recommendation.giveGetOptions, base, opportunity.proposal);
   const redLines = deriveRedLines(opportunity, recommendation);
   const questions = derivePartnerQuestions(opportunity.proposal);
   const approvalStatus = recommendation.approvedBy

@@ -132,6 +132,11 @@ export interface RecommendationInput {
   totalEconomicCostUsd: number;
   missingEvidence: string[];
   changeConditions: string[];
+  /** Discount rate used only to translate the value ceiling into nominal cash terms for the
+   * walk-away threshold (see computeRecommendation). Defaults to DEFAULT_DISCOUNT_RATE, matching
+   * computeValuation's default so the ladder and the valuation use the same time-value assumption
+   * unless a caller overrides both consistently. */
+  discountRate?: number;
 }
 
 const GIVE_GET_OPTIONS: GiveGetOption[] = [
@@ -175,19 +180,57 @@ export function computeRecommendation(input: RecommendationInput): Recommendatio
   const downsideGapUsd = downside.confidenceAdjustedValueUsd - input.totalEconomicCostUsd;
   const decision = decisionFor(baseGapUsd, upsideGapUsd, downsideGapUsd);
 
+  // --- Negotiation ladder -----------------------------------------------------------------
+  // A negotiation ladder is four positions on PRICE (what we pay), not four scenario valuations.
+  // Value sets the ceiling: we should not pay more than the deal is worth on the case we are
+  // willing to underwrite (the base case). Everything below traces to an input shown elsewhere
+  // in the app (scenario CAVs, the proposal's nominal cash cost, and its NPV).
+  //
+  // Confidence-adjusted value (CAV) is itself a present-value judgment -- the value stack is not
+  // re-discounted (see scripts/reconcile_check.py) -- so CAV compares apples-to-apples with the
+  // NPV of the proposed cash schedule, not with its nominal total. That NPV-vs-nominal
+  // relationship is exactly the ratio the engine already computes for the proposal, so we reuse
+  // it rather than inventing a new constant:
+  const discountRate = input.discountRate ?? DEFAULT_DISCOUNT_RATE;
+  const npvCashCostUsd = npvOfCashSchedule(input.proposal, discountRate);
+  const nominalCashCostUsd = input.totalEconomicCostUsd;
+  const nominalToPresentValueRatio = npvCashCostUsd > 0 ? nominalCashCostUsd / npvCashCostUsd : 1;
+
+  // Opening: the lowest number we can defend with evidence -- what the deal is worth to us if the
+  // risks we have flagged materialize (the downside case), in present-value terms.
+  const openingPositionUsd = downside.confidenceAdjustedValueUsd;
+
+  // Reservation: the value ceiling. The base case is the case we underwrite, so its
+  // confidence-adjusted value is the most we should pay in present-value terms -- paying more
+  // trades away expected value regardless of how the negotiation feels in the room.
+  const reservationValueUsd = base.confidenceAdjustedValueUsd;
+
+  // Walk-away: the same ceiling, restated in nominal cash terms -- the unit the term sheet is
+  // actually written and negotiated in -- using the proposal's own payment schedule. Because
+  // future cash is discounted, nominal >= present value for any schedule with future payments, so
+  // walkAwayValueUsd >= reservationValueUsd by construction; no separate assumption is introduced.
+  const walkAwayValueUsd = reservationValueUsd * nominalToPresentValueRatio;
+
+  // Target: the outcome we steer to -- the midpoint between the opening anchor and the
+  // reservation ceiling, the standard "anchor low, target the middle, cap at the ceiling" ladder.
+  const targetValueUsd = (openingPositionUsd + reservationValueUsd) / 2;
+
   const toM = (value: number) => `${value.toFixed(1)}M`;
+  const askVsWalkAway = nominalCashCostUsd > walkAwayValueUsd ? "above" : "at or below";
   const rationale = [
-    `Base-case confidence-adjusted value is ${toM(base.confidenceAdjustedValueUsd)} against a total proposed economic cost of ${toM(input.totalEconomicCostUsd)} (gap ${toM(baseGapUsd)}).`,
-    `Upside-case confidence-adjusted value is ${toM(upside.confidenceAdjustedValueUsd)} (gap ${toM(upsideGapUsd)}); it depends on adoption and distribution assumptions that are not yet evidenced.`,
-    `Downside-case confidence-adjusted value is ${toM(downside.confidenceAdjustedValueUsd)} (gap ${toM(downsideGapUsd)}).`,
+    `Opening position (${toM(openingPositionUsd)}) is the downside-case confidence-adjusted value: the lowest number we can defend with evidence if the risks we have flagged materialize. It moves with downside-case assumptions and confidence factors.`,
+    `Target (${toM(targetValueUsd)}) is the midpoint between the opening anchor and the reservation ceiling -- the outcome we steer the conversation toward, leaving room to move up without exceeding what we can justify.`,
+    `Reservation value (${toM(reservationValueUsd)}) is the value ceiling: the base-case confidence-adjusted value, in present-value terms, is what this partnership is worth on the case we are willing to underwrite. We should not pay more than this; it moves with base-case assumptions, comparables, and confidence factors.`,
+    `Walk-away threshold (${toM(walkAwayValueUsd)}) restates that same ceiling in nominal cash terms using the proposal's own ${input.proposal.termMonths}-month payment schedule (nominal ${toM(nominalCashCostUsd)} vs NPV ${toM(npvCashCostUsd)} at ${(discountRate * 100).toFixed(0)}%). The current ask is ${askVsWalkAway} this threshold, which is part of why the recommendation is to ${decision}.`,
+    `Upside-case confidence-adjusted value is ${toM(upside.confidenceAdjustedValueUsd)} (gap ${toM(upsideGapUsd)} vs the nominal ask); it depends on adoption and distribution assumptions that are not yet evidenced and is not used to set the ceiling -- paying up to an optimistic-case value would give away the risk-adjustment the model exists to protect.`,
   ];
 
   return {
     decision,
-    openingPositionUsd: downside.confidenceAdjustedValueUsd,
-    targetValueUsd: (base.confidenceAdjustedValueUsd + upside.confidenceAdjustedValueUsd) / 2,
-    reservationValueUsd: base.confidenceAdjustedValueUsd,
-    walkAwayValueUsd: upside.confidenceAdjustedValueUsd,
+    openingPositionUsd,
+    targetValueUsd,
+    reservationValueUsd,
+    walkAwayValueUsd,
     preferredStructure: preferredStructureFor(decision),
     rationale,
     giveGetOptions: GIVE_GET_OPTIONS,

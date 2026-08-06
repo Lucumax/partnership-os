@@ -21,7 +21,10 @@ describe("toMarkdown", () => {
   it("contains the seeded base CAV and decision", () => {
     expect(markdown).toContain("$25.2M");
     expect(markdown).toContain("pilot");
-    expect(markdown).toContain("$36.8M");
+    // Target is the midpoint of the opening anchor (downside CAV) and the reservation ceiling
+    // (base CAV) -- not the old base/upside midpoint ($36.8M), which mixed a price position with
+    // the unpriced upside case. See computeRecommendation in src/lib/valuation/engine.ts.
+    expect(markdown).toContain("$16.4M");
     expect(markdown).toContain("$48.4M");
     expect(markdown).toContain("$7.7M");
   });

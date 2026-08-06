@@ -5,6 +5,7 @@ import {
   computeScenario,
   computeValuation,
 } from "@/lib/valuation/engine";
+import { DEFAULT_DISCOUNT_RATE, npvOfCashSchedule } from "@/lib/valuation/formulas";
 import {
   ATLAS_ANALYSIS_DATE,
   ATLAS_COMPARABILITY_TARGET,
@@ -84,8 +85,82 @@ describe("computeRecommendation", () => {
     });
     expect(recommendation.decision).toBe("pilot");
     expect(recommendation.preferredStructure.toLowerCase()).toContain("pilot");
-    expect(recommendation.walkAwayValueUsd).toBeGreaterThan(recommendation.reservationValueUsd);
     expect(recommendation.generatedBy).toBe("ai_draft");
+  });
+
+  it("negotiation ladder is ordered as positions on price: opening < target < reservation <= walk-away", () => {
+    const recommendation = computeRecommendation({
+      scenarios: valuation.byName,
+      proposal: ATLAS_PROPOSAL,
+      risks: ATLAS_RISKS,
+      totalEconomicCostUsd: valuation.totalEconomicCostUsd,
+      missingEvidence: [],
+      changeConditions: [],
+    });
+    expect(recommendation.openingPositionUsd).toBeLessThan(recommendation.targetValueUsd);
+    expect(recommendation.targetValueUsd).toBeLessThan(recommendation.reservationValueUsd);
+    expect(recommendation.reservationValueUsd).toBeLessThanOrEqual(recommendation.walkAwayValueUsd);
+  });
+
+  it("anchors opening/reservation/target to scenario CAVs rather than a fabricated split", () => {
+    const recommendation = computeRecommendation({
+      scenarios: valuation.byName,
+      proposal: ATLAS_PROPOSAL,
+      risks: ATLAS_RISKS,
+      totalEconomicCostUsd: valuation.totalEconomicCostUsd,
+      missingEvidence: [],
+      changeConditions: [],
+    });
+    expect(recommendation.openingPositionUsd).toBeCloseTo(
+      valuation.byName.downside.confidenceAdjustedValueUsd,
+      9,
+    );
+    expect(recommendation.reservationValueUsd).toBeCloseTo(
+      valuation.byName.base.confidenceAdjustedValueUsd,
+      9,
+    );
+    expect(recommendation.targetValueUsd).toBeCloseTo(
+      (recommendation.openingPositionUsd + recommendation.reservationValueUsd) / 2,
+      9,
+    );
+    // Regression guard for the original bug: walk-away must not simply be the upside CAV (which
+    // made "walk away" the largest number in the ladder, for exactly the wrong reason).
+    expect(recommendation.walkAwayValueUsd).not.toBeCloseTo(
+      valuation.byName.upside.confidenceAdjustedValueUsd,
+      1,
+    );
+  });
+
+  it("derives the walk-away threshold from the reservation ceiling via the proposal's own nominal/NPV ratio", () => {
+    const recommendation = computeRecommendation({
+      scenarios: valuation.byName,
+      proposal: ATLAS_PROPOSAL,
+      risks: ATLAS_RISKS,
+      totalEconomicCostUsd: valuation.totalEconomicCostUsd,
+      missingEvidence: [],
+      changeConditions: [],
+    });
+    const npv = npvOfCashSchedule(ATLAS_PROPOSAL, DEFAULT_DISCOUNT_RATE);
+    const expectedWalkAway = recommendation.reservationValueUsd * (valuation.totalEconomicCostUsd / npv);
+    expect(recommendation.walkAwayValueUsd).toBeCloseTo(expectedWalkAway, 6);
+    // Sanity check against the reconciled NPV figure (~25.62M on a 31.0M nominal ask).
+    expect(npv).toBeGreaterThan(24.0);
+    expect(npv).toBeLessThan(27.0);
+  });
+
+  it("reservation value tracks the value we underwrite, not the size of the counterparty's ask", () => {
+    const recommendation = computeRecommendation({
+      scenarios: valuation.byName,
+      proposal: ATLAS_PROPOSAL,
+      risks: ATLAS_RISKS,
+      totalEconomicCostUsd: 1000, // an implausibly large ask should not move what we'd pay
+      missingEvidence: [],
+      changeConditions: [],
+    });
+    expect(recommendation.reservationValueUsd).toBeCloseTo(
+      valuation.byName.base.confidenceAdjustedValueUsd,
+      9,
+    );
   });
 
   it("pursues once the base case clears the proposed cost", () => {
@@ -99,6 +174,10 @@ describe("computeRecommendation", () => {
       changeConditions: [],
     });
     expect(recommendation.decision).toBe("pursue");
+    expect(recommendation.reservationValueUsd).toBe(40.0);
+    expect(recommendation.openingPositionUsd).toBeLessThan(recommendation.targetValueUsd);
+    expect(recommendation.targetValueUsd).toBeLessThan(recommendation.reservationValueUsd);
+    expect(recommendation.reservationValueUsd).toBeLessThanOrEqual(recommendation.walkAwayValueUsd);
   });
 });
 
