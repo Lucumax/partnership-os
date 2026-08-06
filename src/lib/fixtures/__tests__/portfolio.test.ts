@@ -14,8 +14,8 @@ function daysBetween(fromIso: string, toIso: string): number {
 }
 
 describe("portfolio fixtures", () => {
-  it("holds six cases with Atlas as the only fully modeled one", () => {
-    expect(PORTFOLIO_ENTRIES).toHaveLength(6);
+  it("holds ten cases with Atlas as the only fully modeled one", () => {
+    expect(PORTFOLIO_ENTRIES).toHaveLength(10);
     const modeled = PORTFOLIO_ENTRIES.filter((entry) => entry.modeled);
     expect(modeled).toHaveLength(1);
     expect(modeled[0]).toBe(ATLAS_PORTFOLIO_ENTRY);
@@ -71,7 +71,7 @@ describe("portfolio aggregation (regression guard for the reduce-iteratee bug)",
 
   it("pipeline value equals the SUM of entry gross values — not N × Atlas", () => {
     const total = sumBy(PORTFOLIO_ENTRIES, (entry) => entry.grossValueUsd);
-    expect(total).toBeCloseTo(136.0, 6);
+    expect(total).toBeCloseTo(193.0, 6);
     expect(total).not.toBeCloseTo(
       PORTFOLIO_ENTRIES.length * ATLAS_PORTFOLIO_ENTRY.grossValueUsd,
       6,
@@ -80,7 +80,7 @@ describe("portfolio aggregation (regression guard for the reduce-iteratee bug)",
 
   it("confidence-adjusted value equals the SUM of entry CAVs — not N × Atlas", () => {
     const total = sumBy(PORTFOLIO_ENTRIES, (entry) => entry.confidenceAdjustedValueUsd);
-    expect(total).toBeCloseTo(85.0, 6);
+    expect(total).toBeCloseTo(120.2, 6);
     expect(total).not.toBeCloseTo(
       PORTFOLIO_ENTRIES.length * ATLAS_PORTFOLIO_ENTRY.confidenceAdjustedValueUsd,
       6,
@@ -89,20 +89,43 @@ describe("portfolio aggregation (regression guard for the reduce-iteratee bug)",
 
   it("proposed spend equals the SUM of entry costs — not N × Atlas", () => {
     const total = sumBy(PORTFOLIO_ENTRIES, (entry) => entry.economicCostUsd);
-    expect(total).toBeCloseTo(82.0, 6);
+    expect(total).toBeCloseTo(111.5, 6);
     expect(total).not.toBeCloseTo(
       PORTFOLIO_ENTRIES.length * ATLAS_PORTFOLIO_ENTRY.economicCostUsd,
       6,
     );
   });
 
-  it("funnel counts sum to the number of entries (6)", () => {
+  it("funnel counts sum to the number of entries (10)", () => {
     const stages = [...new Set(PORTFOLIO_ENTRIES.map((entry) => entry.stage))];
     const count = stages.reduce(
       (sum, stage) => sum + PORTFOLIO_ENTRIES.filter((entry) => entry.stage === stage).length,
       0,
     );
-    expect(count).toBe(6);
+    expect(count).toBe(10);
+  });
+
+  it("pipeline holds more cases in inbound than in any later stage (thinning shape)", () => {
+    const countByStage = new Map<string, number>();
+    for (const entry of PORTFOLIO_ENTRIES) {
+      countByStage.set(entry.stage, (countByStage.get(entry.stage) ?? 0) + 1);
+    }
+    const inboundCount = countByStage.get("inbound") ?? 0;
+    const laterStages = ["negotiation", "approval", "contracting"] as const;
+    for (const stage of laterStages) {
+      expect(inboundCount).toBeGreaterThan(countByStage.get(stage) ?? 0);
+    }
+  });
+
+  it("lets a single negotiation-stage case outweigh the inbound stage on CAV", () => {
+    const cavByStage = new Map<string, number>();
+    for (const entry of PORTFOLIO_ENTRIES) {
+      cavByStage.set(
+        entry.stage,
+        (cavByStage.get(entry.stage) ?? 0) + entry.confidenceAdjustedValueUsd,
+      );
+    }
+    expect(cavByStage.get("negotiation") ?? 0).toBeGreaterThan(cavByStage.get("inbound") ?? 0);
   });
 
   it("concentration shares sum to ~100% of portfolio CAV", () => {

@@ -56,11 +56,20 @@ export const ATLAS_PORTFOLIO_ENTRY: PortfolioEntry = {
 };
 
 /**
- * Five fictional supporting cases. All numbers are synthetic and invented — no real
- * company names, no real deal data. Each is CAV < gross (CAV is risk-discounted), and
- * together they land on both sides of the value = spend line so the scatter and
- * concentration charts carry real signal. Dates are set relative to the fixed
- * ATLAS_ANALYSIS_DATE (2026-07-30), so at least two decisions fall 8–25 days out.
+ * Nine fictional supporting cases, shaped like a real pipeline rather than one case
+ * per stage: mass in the early stages (inbound, diligence), thinning through
+ * negotiation and approval, with one case active and one declined. All numbers are
+ * synthetic and invented — no real company names, no real deal data. Each is
+ * CAV < gross (CAV is risk-discounted), and together they land on both sides of the
+ * value = spend line so the scatter and concentration charts carry real signal.
+ * Dates are set relative to the fixed ATLAS_ANALYSIS_DATE (2026-07-30), so at least
+ * two decisions fall 8–25 days out.
+ *
+ * Stage shape (Atlas sits in "valuation"): inbound 3, diligence 2, valuation 1,
+ * negotiation 1, approval 1, contracting 0, active 1, declined 1 — 10 cases total.
+ * This is deliberate: it lets "Pipeline value by stage" show that a single
+ * negotiation-stage case can carry more confidence-adjusted value than several
+ * early-stage cases combined, which a flat one-per-stage count chart cannot.
  */
 const SUPPORTING_ENTRIES: PortfolioEntry[] = [
   {
@@ -73,6 +82,32 @@ const SUPPORTING_ENTRIES: PortfolioEntry[] = [
     grossValueUsd: 6.0,
     confidenceAdjustedValueUsd: 4.2,
     economicCostUsd: 2.5,
+    highRisk: false,
+    modeled: false,
+  },
+  {
+    id: "solstice-data-exchange",
+    name: "Solstice Data Exchange",
+    partnerAlias: "Solstice",
+    archetype: "data_licensing",
+    stage: "inbound",
+    owner: "strategy.ops.lead",
+    grossValueUsd: 5.0,
+    confidenceAdjustedValueUsd: 3.2,
+    economicCostUsd: 2.0,
+    highRisk: false,
+    modeled: false,
+  },
+  {
+    id: "meridian-integration-bridge",
+    name: "Meridian Integration Bridge",
+    partnerAlias: "Meridian",
+    archetype: "product_integration",
+    stage: "inbound",
+    owner: "research.stakeholder",
+    grossValueUsd: 8.0,
+    confidenceAdjustedValueUsd: 5.0,
+    economicCostUsd: 4.0,
     highRisk: false,
     modeled: false,
   },
@@ -91,6 +126,19 @@ const SUPPORTING_ENTRIES: PortfolioEntry[] = [
     modeled: false,
   },
   {
+    id: "beacon-distribution-network",
+    name: "Beacon Distribution Network",
+    partnerAlias: "Beacon",
+    archetype: "distribution",
+    stage: "diligence",
+    owner: "deal.lead",
+    grossValueUsd: 14.0,
+    confidenceAdjustedValueUsd: 8.0,
+    economicCostUsd: 7.5,
+    highRisk: false,
+    modeled: false,
+  },
+  {
     id: "cascade-channel-alliance",
     name: "Cascade Channel Alliance",
     partnerAlias: "Cascade",
@@ -101,6 +149,20 @@ const SUPPORTING_ENTRIES: PortfolioEntry[] = [
     grossValueUsd: 44.0,
     confidenceAdjustedValueUsd: 28.5,
     economicCostUsd: 20.0,
+    highRisk: true,
+    modeled: false,
+  },
+  {
+    id: "ridgeline-ecosystem-compact",
+    name: "Ridgeline Ecosystem Compact",
+    partnerAlias: "Ridgeline",
+    archetype: "strategic_ecosystem",
+    stage: "approval",
+    owner: "delivery.lead",
+    decisionDate: "2026-08-24T00:00:00Z",
+    grossValueUsd: 30.0,
+    confidenceAdjustedValueUsd: 19.0,
+    economicCostUsd: 16.0,
     highRisk: true,
     modeled: false,
   },
