@@ -274,3 +274,218 @@ Token changes in `globals.css` `:root` only (`--muted-foreground` 0.47→0.44, `
 - **Untracked environment files** (`GITHUB_AUDIT_REPORT.md`, `PREP_MANIFEST.md`,
   `anthropic_partnership_value_os_spec.zip`, `spec/anthropic_partnership_value_os/`) are not part
   of the app and were not committed.
+
+# Design pass — pipeline chart + legibility
+
+Date of run: 2026-08-06 · Branch: `main` · same stack as above.
+
+The owner reviewed the live site (https://partnership-os-one.vercel.app/) and raised two issues,
+both correct: (1) "Pipeline by stage still doesn't look good" — the chart plotted opportunity
+*count* on a portfolio with exactly one case per stage, so all six bars were length 1; (2) "Fonts
+are too light" — `text-muted-foreground` passed WCAG AA but read washed out, and Geist at default
+weight compounded it. This pass fixes both without touching `formulas.ts`/`engine.ts` or
+redesigning the cream/plum palette and serif-heading type scale.
+
+## 1. Gates — all green, real output
+
+| Gate | Command | Result |
+|---|---|---|
+| Lint | `npm run lint` | ✅ 0 errors |
+| Typecheck | `npx tsc --noEmit` | ✅ 0 errors |
+| Unit tests | `npx vitest run` | ✅ 11 files / **102 passed** (was 100; +2 fixture-shape regression tests) |
+| Build | `npm run build` | ✅ success, all 10 routes still statically prerendered |
+| E2E | `npx playwright test` | ✅ **30 passed** (unchanged count; several tests' underlying data changed and all still pass) |
+| Reconcile | `python scripts/reconcile_check.py` | ✅ `RECONCILIATION OK` — GPV 14.0/35.0/62.0 · CF 0.55/0.72/0.78 · CAV 7.7/25.2/48.4 · gaps −23.3/−5.8/+17.4 · NPV 25.62 (byte-identical to spec; Atlas's own figures never moved) |
+
+## 2. Task P — what the pipeline chart plots now, and why it's a better reading
+
+**Before:** `StageFunnelChart` plotted `count` per stage. With one case per stage, every bar was
+length 1 — a comb, not a funnel — and the caption admitted it ("one per stage").
+
+**After:** the chart plots **confidence-adjusted value (CAV) summed per stage** as the bar length
+(the strongest single measure, per the brief), with **case count as a direct label** at the end of
+each bar as the secondary detail the brief allows. The stage that is Atlas's own (`Valuation`) is
+tinted with a distinct highlight color (`--chart-3`) instead of the default series color, and a
+stage with zero cases (`Contracting`) renders a visible hairline-colored sliver + "0 cases" label
+via `minPointSize`, so an empty stage reads as a deliberate data point, not a rendering bug.
+
+The card title changed from "Pipeline by stage" to **"Pipeline value by stage"**, the description
+now states what's plotted ("Confidence-adjusted value (CAV) held at each stage — case count
+labeled per bar"), and the caption below the chart is now a **computed finding**, not a mechanical
+description:
+
+> "Negotiation carries more confidence-adjusted value in a single case ($28.5M) than the 3 cases
+> sitting in Inbound combined ($12.4M)."
+
+That sentence is generated in `src/app/page.tsx` from the actual stage sums (`topValueStage` vs.
+`highestCountStage`), not hardcoded — it will recompute honestly if the fixtures change again. The
+result varies meaningfully bar-to-bar ($0M–$28.5M across 8 stages), tells a real story at a glance
+(value concentrates late-stage despite most cases sitting early), and still reads as a pipeline
+(same 8-stage vertical order, inbound → declined).
+
+The chart's `aria-label` is fully data-driven: `"Confidence-adjusted value by stage: Inbound $12.4M
+across 3 cases, …"` — regenerated from the same data the bars and labels use, so `a11y.spec.ts`
+stays accurate after the change.
+
+## 3. The reshaped portfolio, and its new totals
+
+`src/lib/fixtures/portfolio.ts` went from 5 supporting cases (exactly one per non-Atlas stage) to
+**9 supporting cases**, shaped like a real pipeline — mass in early stages, thinning through
+negotiation/approval, one active, one declined:
+
+| Stage | Cases | Names added |
+|---|---|---|
+| Inbound | 3 | Halcyon (existing) + **Solstice Data Exchange**, **Meridian Integration Bridge** (new) |
+| Diligence | 2 | Vantage (existing) + **Beacon Distribution Network** (new) |
+| Valuation | 1 | Atlas (fixed, engine-derived, unchanged) |
+| Negotiation | 1 | Cascade (existing) |
+| Approval | 1 | **Ridgeline Ecosystem Compact** (new) |
+| Contracting | 0 | — (a real, deliberate gap) |
+| Active | 1 | Pinnacle (existing) |
+| Declined | 1 | Apex (existing) |
+
+All new cases: clearly fictional, invented company names, `modeled: false` / no `href`
+(portfolio-only), `confidenceAdjustedValueUsd < grossValueUsd`. Ridgeline's decision date
+(2026-08-24, 25 days out) adds a third near-term decision on top of the existing two
+(Vantage/Cascade), keeping the "decisions due in 30 days" KPI comfortably non-zero. Archetypes
+spread across all 5 buckets (data licensing ×3, product integration ×2, distribution ×2, strategic
+ecosystem ×2, hybrid ×1 [Atlas]) so concentration-by-archetype stays a real reading (Distribution
+tops out at 30% of CAV — a genuine concentration signal, not a single 100% bar).
+
+**Dashboard totals, honestly changed** (regression test `portfolio.test.ts` updated to match, not
+fudged):
+
+| Metric | Before (6 cases) | After (10 cases) |
+|---|---:|---:|
+| Pipeline value (Σ gross) | $136.0M | **$193.0M** |
+| Confidence-adjusted value (Σ CAV) | $85.0M | **$120.2M** |
+| Proposed spend (Σ cost) | $82.0M | **$111.5M** |
+| Cases paying for themselves | — | 7 of 10 |
+| High-risk opportunities | 2 | 3 |
+
+Atlas's own numbers ($35.0M gross / $25.2M CAV / $31.0M cost / −$5.8M gap) are untouched — they
+come from `computeValuation()`, never hardcoded, and the reconciliation script proves they didn't
+drift.
+
+## 4. Task P3 — one chart system, not five
+
+All five charts (`stage-funnel`, `value-vs-spend-scatter`, `concentration-by-archetype`,
+`value-range-chart`, `value-waterfall`) now share one categorical role mapping instead of each
+picking `--chart-N` tokens ad hoc:
+
+| Role | Token | Used in |
+|---|---|---|
+| Confidence-adjusted value (the primary "value" reading) | `--chart-1` (teal) | stage-funnel bars, scatter points, concentration bars, value-range CAV bar, waterfall value components |
+| Gross / less-adjusted value (same entity, lighter cut) | `--chart-5` (light teal — same hue family as chart-1, sequential relationship) | value-range gross bar, waterfall gross total |
+| "This is Atlas / the modeled case" highlight | `--chart-3` (blue-violet) | stage-funnel's active-stage bar, scatter's Atlas point — both carry a text legend, never color alone |
+| Cost / negative | `--destructive` (red) | value-range cost line, waterfall cost bars |
+
+Also standardized: every chart's axis ticks now set an explicit `fill: var(--muted-foreground)` +
+`fontWeight: 500` (previously unset, which meant Recharts silently fell back to its own hardcoded
+`#666` default, completely untied from the app's theme — a real bug independent of the "light
+text" complaint, since it meant axis ticks never respected dark mode or any token change). Number
+formatting is unified on the shared `formatM`/`formatPercent` helpers (`src/components/portfolio/format.ts`)
+instead of each chart re-implementing its own `fmt()`. Tooltips now lead with a **finding**:
+
+- Scatter: "Pays for itself by $8.5M" / "Falls short by $0.2M" (was three raw value lines)
+- Value-range: "Risk discount removes $9.8M (28%) versus gross" (new leading line, raw breakdown kept below)
+- Stage funnel / concentration: value + share stated in one line, case count/percentage as the read
+
+A small direct-labeled legend was added under the scatter chart ("Atlas (modeled case)" /
+"Portfolio-only cases") since two colors now carry identity there — color never carries meaning
+alone.
+
+## 5. Task Q — typography legibility: before → after
+
+Only `--muted-foreground` was darkened (per the brief, nothing else in the palette or type scale
+changed). Ratios computed with a standalone OKLCH→sRGB WCAG calculator (relative-luminance
+formula) against every surface the token actually renders on:
+
+| Surface pair | Before | After | Floor |
+|---|---:|---:|---|
+| Light muted-fg vs. `background` | 7.24:1 | **9.34:1** | 4.5:1 |
+| Light muted-fg vs. `card` | 7.65:1 | **9.87:1** | 4.5:1 |
+| Light muted-fg vs. `muted` (badges/hover) | 6.63:1 | **8.55:1** | 4.5:1 |
+| Dark muted-fg vs. `background` | 7.36:1 | **9.20:1** | 4.5:1 |
+| Dark muted-fg vs. `card` | 6.77:1 | **8.46:1** | 4.5:1 |
+| Dark muted-fg vs. `muted` | 5.81:1 | **7.26:1** | 4.5:1 |
+
+The token was already comfortably past the 4.5:1 floor (this is what "AA already passed" meant in
+the original complaint) — the fix pushes it further past the floor (light: L 0.44→0.38, chroma
+0.02→0.025; dark: L 0.70→0.76, chroma unchanged) *and*, more importantly, pairs the darker color
+with **added font-weight**, since the original "washed out" complaint was as much about Geist at
+regular weight on small (11–12px) text as it was about contrast headroom.
+
+**Weight changes** (`font-medium`, 500, added; nothing heavier — the type scale itself is
+untouched):
+
+- `CardDescription` (shared `ui/card.tsx`) — cascades to every card description app-wide
+- `KpiCard` captions/detail lines
+- `TableCaption` (shared `ui/table.tsx`)
+- `.data-label` and `.evidence-strip` utility classes in `globals.css`
+- Table secondary columns: owner columns, partner-alias sub-labels, "—" placeholders, approver
+  column, assumption-table "updated" column (4 call sites)
+- Sidebar footer ("Synthetic demo data" / "Local-first MVP") and workspace kicker
+- Topbar "Stage …" / "Owner …" secondary text
+- Every chart's axis-tick labels (see §4) and the waterfall's delta labels (weight 600)
+
+Scope was held to the brief's named offenders (KPI cards, chart axis ticks, table secondary
+columns, card descriptions, footer text) rather than a blanket sweep of all ~39 files using
+`text-muted-foreground` — the shared-component edits (`CardDescription`, `.data-label`) already
+reach most of the app for free since nearly every secondary-text pattern in this codebase routes
+through one of those two.
+
+## 6. Screenshots — regenerated, full-length, and a real tooling bug found along the way
+
+All 7 screenshots regenerated via `node scripts/capture-screenshots.mjs` and opened individually:
+
+| File | Dimensions (1440×900 viewport, 2x DPR) | Full-length? |
+|---|---|---|
+| `01-dashboard.png` | 2880×2994 | ✅ (>3x viewport height) |
+| `02-opportunities.png` | 2880×1800 | ✅ (page's natural content is exactly one viewport tall — not a stub) |
+| `03-overview.png` | 2880×5110 | ✅ |
+| `04-valuation.png` | 2880×5454 | ✅ |
+| `05-comparables.png` | 2880×1800 | ✅ (same as opportunities — short page, not a stub) |
+| `06-negotiation.png` | 2880×4892 | ✅ |
+| `07-audit.png` | 2880×3696 | ✅ |
+
+While regenerating, the dashboard screenshot came back with all three chart panels **completely
+blank** (axes/labels present, no bars/points) — reproducible across three separate runs. Root
+cause, confirmed by instrumenting the capture script: `scripts/capture-screenshots.mjs` spawns its
+prod server with `spawn("npx", ["next", "start", …], { shell: true })`. On Windows, `shell: true`
+makes `server` the `cmd.exe` wrapper, not the actual `next-server` process it launches — so
+`server.kill("SIGTERM")` in the script's `cleanup()` only killed the wrapper, leaving a real
+`next-server` **zombie process bound to port 3100** after every run. The next invocation's
+`waitForServer()` happily connected to that stale zombie (serving an old build) instead of the
+freshly-spawned server — and one stale JS chunk 500'd, silently breaking client-side hydration for
+just the dashboard's client chart components while server-rendered content around them (KPI cards,
+tables, captions) rendered fine, producing exactly the "some things blank, everything else normal"
+symptom observed. This was pre-existing tooling risk, not something introduced by the chart edits
+in this pass — confirmed by reproducing the same blank output against an untouched build once a
+zombie was present, and a clean result once it was killed.
+
+Fixed in `scripts/capture-screenshots.mjs`: `cleanup()` now uses `taskkill /pid <pid> /T /F` on
+Windows to kill the whole process tree instead of just the shell wrapper. Verified by running the
+script twice in a row from a cold state and confirming port 3100 is fully released after each run
+(`netstat` shows no LISTENING socket post-exit) and that the dashboard's three charts render
+correctly both times. A modest 500ms settle wait was also added after the full-page
+overflow/height DOM release, as defensive margin against Recharts' `ResizeObserver` re-render
+timing on reflow (not the root cause here, but a real risk class for this capture pattern).
+
+## 7. Honest read: does everything land?
+
+- **Pipeline value by stage** — yes, this is the strongest fix in the pass. It went from a
+  discredited comb chart to bars that vary by an order of magnitude and a caption that states a
+  specific, true, non-obvious finding.
+- **Value versus spend** — reads well with 10 points instead of 6; the Atlas-highlight color plus
+  its own legend keeps it from being just "one weird blue dot."
+- **Concentration by archetype** and **value range (waterfall/scenario bars)** are solid but
+  visually the least changed of the five — they were already reasonably well-formed single-measure
+  bar charts, so this pass mainly unified their color/tick/formatting rather than restructuring
+  them. If there's a residual weak spot, it's that these two are the least "designed" of the five;
+  they'd benefit most from a follow-up pass if there's a next round.
+- **Contracting's empty bar** is a deliberate, labeled zero, not a bug — but it's worth flagging
+  that an empty pipeline stage is an unusual thing to show a reviewer without a full walkthrough;
+  it reads fine once you notice the "0 cases" label, but it is the one place in the dashboard where
+  a first glance could momentarily register as "is that a rendering error?" before the label
+  resolves it.
