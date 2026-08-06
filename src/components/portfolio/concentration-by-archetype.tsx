@@ -10,6 +10,8 @@ import {
   YAxis,
 } from "recharts";
 
+import { formatM } from "./format";
+
 export interface ConcentrationDatum {
   archetype: string;
   valueUsd: number;
@@ -20,6 +22,8 @@ interface ConcentrationByArchetypeProps {
   data: ConcentrationDatum[];
   maxValueUsd: number;
 }
+
+const TICK_STYLE = { fontSize: 12, fontWeight: 500, fill: "var(--muted-foreground)" };
 
 export function ConcentrationByArchetypeChart({ data, maxValueUsd }: ConcentrationByArchetypeProps) {
   return (
@@ -35,17 +39,11 @@ export function ConcentrationByArchetypeChart({ data, maxValueUsd }: Concentrati
           <XAxis
             type="number"
             domain={[0, Math.max(maxValueUsd, 1)]}
-            tick={{ fontSize: 12 }}
+            tick={TICK_STYLE}
             tickFormatter={(value) => `$${Number(value).toFixed(0)}M`}
             stroke="var(--border)"
           />
-          <YAxis
-            type="category"
-            dataKey="archetype"
-            width={110}
-            tick={{ fontSize: 12 }}
-            stroke="var(--border)"
-          />
+          <YAxis type="category" dataKey="archetype" width={114} tick={TICK_STYLE} stroke="var(--border)" />
           <Tooltip
             cursor={{ fill: "var(--muted)" }}
             content={({ active, payload, label }) => {
@@ -55,23 +53,22 @@ export function ConcentrationByArchetypeChart({ data, maxValueUsd }: Concentrati
               const datum = payload[0].payload as ConcentrationDatum;
               return (
                 <div className="rounded-md border bg-background px-3 py-2 text-xs shadow-sm">
-                  <div className="font-medium">{label}</div>
-                  <div>{fmt(datum.valueUsd)} · {datum.share.toFixed(0)}% of portfolio value</div>
+                  <div className="font-semibold text-foreground">{label}</div>
+                  <div className="font-medium text-foreground">
+                    {datum.share.toFixed(0)}% of portfolio CAV
+                  </div>
+                  <div className="text-muted-foreground">{formatM(datum.valueUsd)}</div>
                 </div>
               );
             }}
           />
           <Bar dataKey="valueUsd" radius={[2, 2, 2, 2]}>
             {data.map((datum) => (
-              <Cell key={datum.archetype} fill="var(--chart-4)" />
+              <Cell key={datum.archetype} fill="var(--chart-1)" />
             ))}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
     </div>
   );
-}
-
-function fmt(value: number): string {
-  return `$${Math.abs(value).toFixed(1)}M`;
 }

@@ -25,8 +25,7 @@ import { PORTFOLIO_ENTRIES } from "@/lib/fixtures";
 
 export const metadata: Metadata = {
   title: "Opportunities — Partnership OS",
-  description:
-    "The six cases in the portfolio — where each stands, what it would cost, and what it is worth.",
+  description: `The ${PORTFOLIO_ENTRIES.length} cases in the portfolio — where each stands, what it would cost, and what it is worth.`,
 };
 
 export default function OpportunitiesPage() {
@@ -38,10 +37,11 @@ export default function OpportunitiesPage() {
         <h1 className="font-heading text-xl font-semibold tracking-tight">
           Opportunities
         </h1>
-        <p className="max-w-3xl text-sm text-muted-foreground">
-          The six cases in the portfolio, and where each stands: stage, what it would cost, and
-          its confidence-adjusted value (CAV). Only Atlas Knowledge Systems is modeled end-to-end;
-          the other cases populate portfolio-level views — all names and numbers are fictional.
+        <p className="max-w-3xl text-sm font-medium text-muted-foreground">
+          The {entries.length} cases in the portfolio, and where each stands: stage, what it
+          would cost, and its confidence-adjusted value (CAV). Only Atlas Knowledge Systems is
+          modeled end-to-end; the other cases populate portfolio-level views — all names and
+          numbers are fictional.
         </p>
       </div>
 
@@ -80,7 +80,7 @@ export default function OpportunitiesPage() {
                             {entry.name}
                             <ArrowRight className="size-3" aria-hidden="true" />
                           </Link>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-xs font-medium text-muted-foreground">
                             {entry.partnerAlias}
                           </span>
                         </div>
@@ -90,7 +90,7 @@ export default function OpportunitiesPage() {
                             {entry.name}
                             <PortfolioOnlyBadge />
                           </span>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-xs font-medium text-muted-foreground">
                             {entry.partnerAlias}
                           </span>
                         </div>
@@ -100,7 +100,7 @@ export default function OpportunitiesPage() {
                     <TableCell>
                       <Badge variant="secondary">{stageLabel(entry.stage)}</Badge>
                     </TableCell>
-                    <TableCell className="text-muted-foreground">{entry.owner}</TableCell>
+                    <TableCell className="font-medium text-muted-foreground">{entry.owner}</TableCell>
                     <TableCell className="tabular-nums">
                       {entry.decisionDate ? formatDate(entry.decisionDate) : "—"}
                     </TableCell>
@@ -121,7 +121,7 @@ export default function OpportunitiesPage() {
                       {entry.highRisk ? (
                         <Badge variant="destructive">High risk</Badge>
                       ) : (
-                        <span className="text-muted-foreground">—</span>
+                        <span className="font-medium text-muted-foreground">—</span>
                       )}
                     </TableCell>
                   </TableRow>

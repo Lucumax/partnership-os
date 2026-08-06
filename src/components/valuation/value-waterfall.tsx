@@ -124,16 +124,18 @@ export function ValueWaterfall({ scenario }: { scenario: Scenario }) {
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
               <XAxis
                 dataKey="label"
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 10, fontWeight: 500, fill: "var(--muted-foreground)" }}
                 interval={0}
                 angle={-30}
                 height={58}
                 textAnchor="end"
+                stroke="var(--border)"
               />
               <YAxis
                 tickFormatter={(value: number) => `$${value}M`}
-                tick={{ fontSize: 11 }}
+                tick={{ fontSize: 11, fontWeight: 500, fill: "var(--muted-foreground)" }}
                 width={44}
+                stroke="var(--border)"
               />
               <Tooltip content={<WaterfallTooltip />} cursor={{ fill: "var(--muted)" }} />
               <Bar dataKey="start" stackId="waterfall" fill="transparent" isAnimationActive={false} />
@@ -142,14 +144,14 @@ export function ValueWaterfall({ scenario }: { scenario: Scenario }) {
                   dataKey="delta"
                   position="top"
                   formatter={(value: unknown) => fmtDelta(Number(value))}
-                  style={{ fontSize: 9, fill: "var(--muted-foreground)" }}
+                  style={{ fontSize: 9, fontWeight: 600, fill: "var(--muted-foreground)" }}
                 />
                 {data.map((datum, index) => (
                   <Cell
                     key={index}
                     fill={
                       datum.kind === "value"
-                        ? "var(--chart-4)"
+                        ? "var(--chart-1)"
                         : datum.kind === "cost"
                           ? "var(--destructive)"
                           : "var(--chart-5)"
@@ -160,9 +162,9 @@ export function ValueWaterfall({ scenario }: { scenario: Scenario }) {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-medium text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
-            <span className="inline-block size-2.5 rounded-sm bg-[var(--chart-4)]" /> Value component
+            <span className="inline-block size-2.5 rounded-sm bg-[var(--chart-1)]" /> Value component
           </span>
           <span className="inline-flex items-center gap-1.5">
             <span className="inline-block size-2.5 rounded-sm bg-[var(--destructive)]" /> Cost

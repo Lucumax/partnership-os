@@ -12,6 +12,8 @@ import {
   YAxis,
 } from "recharts";
 
+import { formatM, formatPercent } from "./format";
+
 export interface ValueRangeDatum {
   scenario: string;
   grossValueUsd: number;
@@ -24,6 +26,8 @@ interface ValueRangeChartProps {
   costUsd: number;
   maxUsd: number;
 }
+
+const TICK_STYLE = { fontSize: 12, fontWeight: 500, fill: "var(--muted-foreground)" };
 
 export function ValueRangeChart({ data, costUsd, maxUsd }: ValueRangeChartProps) {
   return (
@@ -40,9 +44,9 @@ export function ValueRangeChart({ data, costUsd, maxUsd }: ValueRangeChartProps)
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
           <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="scenario" tick={{ fontSize: 12 }} stroke="var(--border)" />
+          <XAxis dataKey="scenario" tick={TICK_STYLE} stroke="var(--border)" />
           <YAxis
-            tick={{ fontSize: 12 }}
+            tick={TICK_STYLE}
             tickFormatter={(value) => `$${Number(value).toFixed(0)}M`}
             domain={[0, maxUsd]}
             stroke="var(--border)"
@@ -53,17 +57,25 @@ export function ValueRangeChart({ data, costUsd, maxUsd }: ValueRangeChartProps)
                 return null;
               }
               const datum = payload[0].payload as ValueRangeDatum;
+              const discountUsd = datum.grossValueUsd - datum.adjustedValueUsd;
+              const discountPct =
+                datum.grossValueUsd > 0 ? discountUsd / datum.grossValueUsd : 0;
               return (
                 <div className="rounded-md border bg-background px-3 py-2 text-xs shadow-sm">
-                  <div className="font-medium">{label}</div>
-                  <div>Gross value (GPV) {fmt(datum.grossValueUsd)}</div>
-                  <div>Confidence-adjusted (CAV) {fmt(datum.adjustedValueUsd)}</div>
-                  <div>Gap vs cost {fmt(datum.gapUsd)}</div>
+                  <div className="font-semibold text-foreground">{label}</div>
+                  <div className="font-medium text-foreground">
+                    Risk discount removes {formatM(discountUsd)} ({formatPercent(discountPct)})
+                    versus gross
+                  </div>
+                  <div className="text-muted-foreground">
+                    Gross {formatM(datum.grossValueUsd)} · Adjusted {formatM(datum.adjustedValueUsd)} ·
+                    Gap vs cost {formatM(datum.gapUsd, { sign: true })}
+                  </div>
                 </div>
               );
             }}
           />
-          <Legend wrapperStyle={{ fontSize: 12 }} />
+          <Legend wrapperStyle={{ fontSize: 12, fontWeight: 500 }} />
           <ReferenceLine
             y={costUsd}
             stroke="var(--destructive)"
@@ -73,17 +85,18 @@ export function ValueRangeChart({ data, costUsd, maxUsd }: ValueRangeChartProps)
               position: "insideTopLeft",
               fill: "var(--muted-foreground)",
               fontSize: 11,
+              fontWeight: 500,
             }}
           />
-          <Bar dataKey="grossValueUsd" name="Gross value (GPV)" fill="var(--chart-2)" radius={[2, 2, 0, 0]} />
-          <Bar dataKey="adjustedValueUsd" name="Confidence-adjusted (CAV)" fill="var(--chart-4)" radius={[2, 2, 0, 0]} />
+          <Bar dataKey="grossValueUsd" name="Gross value (GPV)" fill="var(--chart-5)" radius={[2, 2, 0, 0]} />
+          <Bar
+            dataKey="adjustedValueUsd"
+            name="Confidence-adjusted (CAV)"
+            fill="var(--chart-1)"
+            radius={[2, 2, 0, 0]}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>
   );
-}
-
-function fmt(value: number): string {
-  const prefix = value < 0 ? "-" : "";
-  return `${prefix}$${Math.abs(value).toFixed(1)}M`;
 }

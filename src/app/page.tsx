@@ -111,18 +111,36 @@ export default function DashboardPage() {
     .sort((a, b) => (a.decisionDate as string).localeCompare(b.decisionDate as string));
   const soonestDecision = upcoming[0]?.decisionDate;
 
-  const funnelData: StageFunnelDatum[] = FUNNEL_STAGES.map((stage) => ({
-    stage: stageLabel(stage),
-    count: entries.filter((entry) => entry.stage === stage).length,
-    active: atlasEntry.stage === stage,
-  }));
-  const populatedStages = funnelData.filter((datum) => datum.count > 0);
+  const funnelData: StageFunnelDatum[] = FUNNEL_STAGES.map((stage) => {
+    const stageEntries = entries.filter((entry) => entry.stage === stage);
+    return {
+      stage: stageLabel(stage),
+      valueUsd: stageEntries.reduce((sum, entry) => sum + entry.confidenceAdjustedValueUsd, 0),
+      count: stageEntries.length,
+      active: atlasEntry.stage === stage,
+    };
+  });
+  const funnelMaxValueUsd = roundUpToTens(
+    Math.max(...funnelData.map((datum) => datum.valueUsd)),
+  );
+  // Data-driven finding for the caption: which stage holds the most CAV, and how
+  // that compares with the stage holding the most cases. Recomputes automatically
+  // if the fixtures ever change shape again.
+  const topValueStage = funnelData.reduce((a, b) => (b.valueUsd > a.valueUsd ? b : a));
+  const highestCountStage = funnelData.reduce((a, b) => (b.count > a.count ? b : a));
+  const pipelineCaption =
+    highestCountStage.stage !== topValueStage.stage && highestCountStage.count > 1
+      ? `${topValueStage.stage} carries more confidence-adjusted value in ${
+          topValueStage.count === 1 ? "a single case" : `${topValueStage.count} cases`
+        } (${formatM(topValueStage.valueUsd)}) than the ${highestCountStage.count} cases sitting in ${highestCountStage.stage} combined (${formatM(highestCountStage.valueUsd)}).`
+      : `${topValueStage.stage} carries the most confidence-adjusted value in the pipeline, at ${formatM(topValueStage.valueUsd)}.`;
 
   const scatterData: ValueVsSpendDatum[] = entries.map((entry) => ({
     name: entry.name,
     spendUsd: entry.economicCostUsd,
     valueUsd: entry.confidenceAdjustedValueUsd,
     gapUsd: entry.confidenceAdjustedValueUsd - entry.economicCostUsd,
+    active: entry.modeled,
   }));
   const scatterMaxUsd = roundUpToTens(
     Math.max(...scatterData.map((datum) => Math.max(datum.spendUsd, datum.valueUsd))),
@@ -196,9 +214,10 @@ export default function DashboardPage() {
           Start here: see where the pipeline stands, which deals would pay for themselves,
           and what needs a decision next.
         </p>
-        <p className="text-xs text-muted-foreground">
-          Only Atlas Knowledge Systems is modeled end-to-end in this demo. The other five
-          cases populate portfolio-level views — all names and numbers are fictional.
+        <p className="text-xs font-medium text-muted-foreground">
+          Only Atlas Knowledge Systems is modeled end-to-end in this demo. The other{" "}
+          {entries.length - 1} cases populate portfolio-level views — all names and numbers
+          are fictional.
         </p>
       </div>
 
@@ -211,7 +230,7 @@ export default function DashboardPage() {
         <KpiCard
           label="Confidence-adjusted value"
           value={formatM(confidenceAdjustedValueUsd)}
-          caption="risk-discounted across six cases"
+          caption={`risk-discounted across ${entries.length} cases`}
         />
         <KpiCard
           label="Proposed spend"
@@ -236,21 +255,14 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         <Card className="lg:col-span-5">
           <CardHeader>
-            <CardTitle>Pipeline by stage</CardTitle>
+            <CardTitle>Pipeline value by stage</CardTitle>
             <CardDescription>
-              Six cases, each in a different stage — the funnel is populated end to end.
+              Confidence-adjusted value (CAV) held at each stage — case count labeled per bar.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <StageFunnelChart
-              data={funnelData}
-              maxCount={Math.max(...funnelData.map((datum) => datum.count), 1)}
-            />
-            <p className="mt-2 text-xs text-muted-foreground">
-              {populatedStages.length === 1
-                ? `One case, in ${populatedStages[0].stage}.`
-                : `${entries.length} cases across ${populatedStages.length} stages, from inbound through declined — one per stage.`}
-            </p>
+            <StageFunnelChart data={funnelData} maxValueUsd={funnelMaxValueUsd} />
+            <p className="mt-2 text-xs font-medium text-muted-foreground">{pipelineCaption}</p>
           </CardContent>
         </Card>
 
