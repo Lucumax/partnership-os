@@ -12,7 +12,7 @@
  * indicator can never appear, and the script waits for charts to finish their
  * entrance animation before shooting.
  */
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
@@ -89,7 +89,23 @@ async function main() {
   });
   const cleanup = () => {
     try {
-      server.kill("SIGTERM");
+      if (process.platform === "win32" && server.pid) {
+        // On Windows, spawning through a shell (required for npx) means
+        // `server` is the cmd.exe wrapper, not the actual next-server
+        // process it launches. server.kill() only signals that wrapper --
+        // the real next-server grandchild survives as a zombie holding the
+        // port. A later run of this script then binds waitForServer() to
+        // that stale, orphaned server instead of the fresh one it just
+        // spawned, silently screenshotting an old build (observed as
+        // "blank charts" from a 500 on a since-removed chunk hash).
+        // taskkill /T kills the whole process tree instead of just the
+        // wrapper.
+        spawnSync("taskkill", ["/pid", String(server.pid), "/T", "/F"], {
+          stdio: "ignore",
+        });
+      } else {
+        server.kill("SIGTERM");
+      }
     } catch {
       // already gone
     }
@@ -143,6 +159,16 @@ async function main() {
           shell.style.alignItems = "flex-start";
         }
       });
+
+      // The overflow/height release above reflows the whole page, which
+      // fires Recharts' ResizeObserver on every chart's ResponsiveContainer.
+      // That callback re-measures and re-renders asynchronously; taking the
+      // screenshot in the same tick can catch a chart mid-remeasure with a
+      // transient 0-size box, which Recharts renders as an empty <svg> that
+      // never gets a follow-up paint before the capture. A short settle wait
+      // gives every ResizeObserver callback (and its re-render) time to land
+      // before we shoot.
+      await page.waitForTimeout(500);
 
       const target = path.join(OUT_DIR, name);
       await page.screenshot({ path: target, fullPage: true });
