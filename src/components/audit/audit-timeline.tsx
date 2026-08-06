@@ -6,6 +6,7 @@ import { CheckCircle2, Paperclip, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { badgeVariants } from "@/components/ui/badge";
+import { useApproval } from "@/components/approval/approval-context";
 import { cn } from "@/lib/utils";
 import type { AuditEvent } from "@/lib/domain/types";
 
@@ -39,15 +40,14 @@ export function AuditTimeline({
   opportunityName,
 }: AuditTimelineProps) {
   const [events, setEvents] = useState(initialEvents);
-  const [approvedAt, setApprovedAt] = useState<string | null>(null);
-  const approved = approvedAt != null;
+  const { approved, approvedAt, approve } = useApproval();
 
   const approveDecision = () => {
     if (approved) {
       return;
     }
     const now = new Date().toISOString();
-    setApprovedAt(now);
+    approve(owner);
     const approvalEvent: AuditEvent = {
       id: `audit-human-${now}`,
       timestamp: now,

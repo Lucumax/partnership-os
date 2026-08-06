@@ -5,21 +5,22 @@ import { CheckCircle2, Download, FileJson, LoaderCircle, ShieldCheck } from "luc
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AILabel } from "@/components/assistant/ai-label";
+import { ApprovalAwareAiLabel, useApproval } from "@/components/approval/approval-context";
 import { downloadBlob } from "@/lib/export/download";
 
 interface NegotiationActionsProps {
   markdown: string;
   json: string;
-  initialApprovedBy?: string;
+  /** Name recorded as the approver when a human clicks "Approve brief". */
+  approver: string;
 }
 
 export function NegotiationActions({
   markdown,
   json,
-  initialApprovedBy,
+  approver,
 }: NegotiationActionsProps) {
-  const [approved, setApproved] = useState(initialApprovedBy != null);
+  const { approved, approve, revoke } = useApproval();
   const [generatedAt, setGeneratedAt] = useState<string | null>(null);
   const [showBrief, setShowBrief] = useState(false);
 
@@ -38,7 +39,7 @@ export function NegotiationActions({
         <Button
           size="sm"
           variant={approved ? "outline" : "default"}
-          onClick={() => setApproved((value) => !value)}
+          onClick={() => (approved ? revoke() : approve(approver))}
         >
           <ShieldCheck className="size-3.5" aria-hidden="true" />
           {approved ? "Revoke approval" : "Approve brief"}
@@ -73,12 +74,11 @@ export function NegotiationActions({
       {showBrief ? (
         <div className="rounded-lg border bg-muted/40 p-4">
           <div className="mb-2 flex items-center gap-2">
-            <AILabel
+            <ApprovalAwareAiLabel
               generatedAt={generatedAt ?? undefined}
               modelId="deterministic-engine"
               sources={["3 scenarios", "5 comparables"]}
               uncertainty="low"
-              approvalStatus={approved ? "approved" : "awaiting"}
             />
             <span className="text-xs text-muted-foreground">
               Deterministic template · no live AI at runtime

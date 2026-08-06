@@ -10,16 +10,24 @@ import type {
   SourceType,
 } from "@/lib/domain/types";
 
+// Inserts thousands separators into the integer part of a fixed-decimal numeric
+// string (e.g. "1513.0" -> "1,513.0"). Display-only: never touches the underlying value.
+function groupThousands(fixed: string): string {
+  const [integerPart, fractionPart] = fixed.split(".");
+  const grouped = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return fractionPart === undefined ? grouped : `${grouped}.${fractionPart}`;
+}
+
 export function fmtMoney(value: number): string {
-  return `$${value.toFixed(1)}M`;
+  return `$${groupThousands(value.toFixed(1))}M`;
 }
 
 export function fmtMoneyPrecise(value: number): string {
-  return `$${value.toFixed(2)}M`;
+  return `$${groupThousands(value.toFixed(2))}M`;
 }
 
 export function fmtSignedMoney(value: number): string {
-  const abs = Math.abs(value).toFixed(1);
+  const abs = groupThousands(Math.abs(value).toFixed(1));
   return value >= 0 ? `+$${abs}M` : `−$${abs}M`;
 }
 

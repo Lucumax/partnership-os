@@ -20,7 +20,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { AILabel } from "@/components/assistant/ai-label";
+import {
+  ApprovalAwareAiLabel,
+  ApprovalBadge,
+  ApprovalProvider,
+} from "@/components/approval/approval-context";
 import { NegotiationActions } from "@/components/negotiation/negotiation-actions";
 import { PositionPanel } from "@/components/negotiation/position-panel";
 import { GiveGetMatrix } from "@/components/negotiation/give-get-matrix";
@@ -51,6 +55,10 @@ export default function NegotiationPage() {
   const briefJson = toJson(opportunity);
 
   return (
+    <ApprovalProvider
+      initialApprovedBy={recommendation.approvedBy ?? null}
+      initialApprovedAt={recommendation.approvedAt ?? null}
+    >
     <div className="mx-auto max-w-7xl p-6">
       <header className="mb-6">
         <div className="flex flex-wrap items-center gap-2">
@@ -58,22 +66,14 @@ export default function NegotiationPage() {
           <span className={cn(badgeVariants({ variant: "default" }))}>
             Decision · {decisionLabel(recommendation.decision)}
           </span>
-          <AILabel
+          <ApprovalAwareAiLabel
             label="AI draft"
             generatedAt={ATLAS_ANALYSIS_DATE.slice(0, 10)}
             modelId="deterministic-engine"
             sources={["3 scenarios", `${comparables.length} comparables`]}
             uncertainty="low"
-            approvalStatus={recommendation.approvedBy ? "approved" : "awaiting"}
           />
-          <span
-            className={cn(
-              badgeVariants({ variant: "outline" }),
-              "border-primary/30 text-primary",
-            )}
-          >
-            {recommendation.approvedBy ? "Approved" : "Awaiting approval"}
-          </span>
+          <ApprovalBadge />
         </div>
         <h1 className="mt-3 text-2xl font-semibold tracking-tight">Negotiation brief</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -87,7 +87,7 @@ export default function NegotiationPage() {
       </header>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <section className="lg:col-span-3">
+        <section className="lg:col-span-2">
           <PositionPanel
             recommendation={recommendation}
             scenarioCount={valuation.scenarios.length}
@@ -95,7 +95,7 @@ export default function NegotiationPage() {
           />
         </section>
 
-        <section className="lg:col-span-6">
+        <section className="lg:col-span-8">
           <GiveGetMatrix
             rows={giveGetRows}
             base={valuation.byName.base}
@@ -103,7 +103,7 @@ export default function NegotiationPage() {
           />
         </section>
 
-        <section className="lg:col-span-3">
+        <section className="lg:col-span-2">
           <Card className="h-full">
             <CardHeader>
               <CardTitle>Constraints &amp; evidence</CardTitle>
@@ -167,7 +167,7 @@ export default function NegotiationPage() {
         <NegotiationActions
           markdown={briefMarkdown}
           json={briefJson}
-          initialApprovedBy={recommendation.approvedBy}
+          approver={opportunity.owner}
         />
       </div>
 
@@ -176,5 +176,6 @@ export default function NegotiationPage() {
         synthetic case · no live AI at runtime
       </p>
     </div>
+    </ApprovalProvider>
   );
 }

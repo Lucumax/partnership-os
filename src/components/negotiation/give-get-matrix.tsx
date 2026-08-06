@@ -36,8 +36,8 @@ export function GiveGetMatrix({ rows, base, upside }: GiveGetMatrixProps) {
           <TableCaption className="sr-only">Give / get matrix</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead>We give</TableHead>
-              <TableHead>We get</TableHead>
+              <TableHead className="min-w-28">We give</TableHead>
+              <TableHead className="min-w-28">We get</TableHead>
               <TableHead>Economic impact</TableHead>
               <TableHead>Strategic impact</TableHead>
               <TableHead>Risk effect</TableHead>
@@ -46,8 +46,8 @@ export function GiveGetMatrix({ rows, base, upside }: GiveGetMatrixProps) {
           <TableBody>
             {rows.map((row, index) => (
               <TableRow key={`${row.give}-${index}`}>
-                <TableCell>{row.give}</TableCell>
-                <TableCell>{row.get}</TableCell>
+                <TableCell className="whitespace-normal">{row.give}</TableCell>
+                <TableCell className="whitespace-normal">{row.get}</TableCell>
                 <TableCell className="tabular-nums whitespace-normal">
                   {formatUsdMDelta(row.economicImpactUsd)}
                 </TableCell>

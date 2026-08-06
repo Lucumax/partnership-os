@@ -25,8 +25,9 @@ import {
   TableCell,
   TableRow,
 } from "@/components/ui/table";
-import { AILabel } from "@/components/assistant/ai-label";
+import { ApprovalAwareAiLabel, ApprovalProvider } from "@/components/approval/approval-context";
 import { AuditTimeline } from "@/components/audit/audit-timeline";
+import { DecisionApprovalAnswer } from "@/components/audit/decision-approval-answer";
 import { AuditExports } from "@/components/audit/export-actions";
 import { cn } from "@/lib/utils";
 
@@ -69,6 +70,7 @@ export default function AuditPage() {
   ];
 
   return (
+    <ApprovalProvider>
     <div className="mx-auto max-w-7xl p-6">
       <header className="mb-6">
         <div className="flex flex-wrap items-center gap-2">
@@ -76,13 +78,12 @@ export default function AuditPage() {
           <span className={cn(badgeVariants({ variant: "default" }))}>
             Recommendation · {recommendation.decision}
           </span>
-          <AILabel
+          <ApprovalAwareAiLabel
             label="AI draft"
             generatedAt={ATLAS_ANALYSIS_DATE.slice(0, 10)}
             modelId="deterministic-engine"
             sources={[`${ATLAS_COMPARABLES.length} comparables`, "3 scenarios"]}
             uncertainty="low"
-            approvalStatus="awaiting"
           />
         </div>
         <h1 className="mt-3 text-2xl font-semibold tracking-tight">Decision history</h1>
@@ -207,7 +208,7 @@ export default function AuditPage() {
                       {approval.gate} · {approval.approver} · {formatDate(approval.approvedAt)}
                     </li>
                   ))}
-                  <li>Decision approval: awaiting human sign-off (use Approve decision).</li>
+                  <DecisionApprovalAnswer />
                 </ul>
               </div>
             </CardContent>
@@ -219,5 +220,6 @@ export default function AuditPage() {
         <AuditExports markdown={briefMarkdown} json={briefJson} csv={comparablesCsv} />
       </div>
     </div>
+    </ApprovalProvider>
   );
 }

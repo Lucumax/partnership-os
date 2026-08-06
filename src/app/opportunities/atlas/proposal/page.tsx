@@ -25,6 +25,7 @@ import {
   REGULATORY_FLAG_STATUS_LABELS,
   SOURCE_TYPE_LABELS,
 } from "@/components/valuation/format";
+import { DraftValuationComparison } from "@/components/valuation/draft-comparison";
 import { ATLAS_OPPORTUNITY, ATLAS_PROPOSAL, ATLAS_RECOMMENDATION } from "@/lib/fixtures";
 import type {
   DataRight,
@@ -255,12 +256,15 @@ export default function ProposalPage() {
           <h1 className="text-lg font-semibold tracking-tight">Proposal intake</h1>
           <Badge variant="secondary">Synthetic</Badge>
           <Badge variant="outline">{ATLAS_OPPORTUNITY.name}</Badge>
+          <Badge variant="outline">Draft — not applied to the seeded case</Badge>
           {intakeComplete ? <Badge>Intake complete</Badge> : null}
         </div>
         <p className="max-w-3xl text-sm text-muted-foreground">
-          Capture the terms Atlas actually proposed. Everything below is what the valuation and
-          recommendation are built from, so correct anything that is wrong. Edits stay in your
-          browser — nothing is saved to a server.
+          Capture the terms Atlas actually proposed. Edits below are a local draft for exploring
+          the model — the &ldquo;with your edits&rdquo; panel runs them through the real valuation
+          engine so you can see how it responds, but the draft does not overwrite the seeded case
+          that the valuation, negotiation, and audit screens read from. Edits stay in your browser
+          — nothing is saved to a server.
         </p>
       </div>
 
@@ -445,6 +449,8 @@ export default function ProposalPage() {
         </div>
       </div>
 
+      <DraftValuationComparison draft={draft} />
+
       {showQuestions ? (
         <Card className="border-dashed">
           <CardHeader>
@@ -475,7 +481,9 @@ export default function ProposalPage() {
           ) : (
             <span>Intake pending</span>
           )}
-          <span className="tabular-nums">Total economic cost {fmtMoney(totalCost)}</span>
+          <span className="tabular-nums">
+            Draft nominal cost (upfront + annual x term) {fmtMoney(totalCost)}
+          </span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" onClick={saveDraft}>

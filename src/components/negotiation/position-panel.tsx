@@ -1,4 +1,6 @@
-import { AILabel } from "@/components/assistant/ai-label";
+"use client";
+
+import { ApprovalAwareAiLabel } from "@/components/approval/approval-context";
 import {
   Card,
   CardContent,
@@ -66,12 +68,11 @@ export function PositionPanel({
           <p className="mt-1 text-sm">{recommendation.preferredStructure}</p>
         </div>
         <div className="flex items-center gap-2 border-t pt-3 text-xs text-muted-foreground">
-          <AILabel
+          <ApprovalAwareAiLabel
             label="AI draft"
             modelId="deterministic-engine"
             sources={[`${scenarioCount} scenarios`, `${comparableCount} comparables`]}
             uncertainty="low"
-            approvalStatus={recommendation.approvedBy ? "approved" : "awaiting"}
           />
           <span>{recommendation.generatedBy.replace(/_/g, " ")}</span>
         </div>
