@@ -57,7 +57,7 @@ export function ConfidenceBreakdown({ valuation }: { valuation: ValuationResult 
           <TableBody>
             {DIM_KEYS.map((key) => (
               <TableRow key={key}>
-                <TableCell className="text-sm">{DIM_LABELS[key]}</TableCell>
+                <TableCell className="text-sm whitespace-normal">{DIM_LABELS[key]}</TableCell>
                 {SCENARIOS.map((name) => (
                   <TableCell key={name} className="text-right text-sm tabular-nums">
                     {pct(valuation.byName[name].confidenceFactorDims[key])}
@@ -66,7 +66,9 @@ export function ConfidenceBreakdown({ valuation }: { valuation: ValuationResult 
               </TableRow>
             ))}
             <TableRow className="bg-muted/40 hover:bg-muted/40">
-              <TableCell className="text-sm font-medium">Confidence factor (mean)</TableCell>
+              <TableCell className="text-sm font-medium whitespace-normal">
+                Confidence factor (mean)
+              </TableCell>
               {SCENARIOS.map((name) => (
                 <TableCell key={name} className="text-right text-sm font-medium tabular-nums">
                   {pct(valuation.byName[name].confidenceFactor)}

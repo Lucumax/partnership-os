@@ -118,6 +118,32 @@ async function main() {
         );
       }
 
+      // The app shell (src/app/layout.tsx) pins <body> to the viewport height
+      // and scrolls only the inner <main id="main"> region (h-screen
+      // overflow-hidden on the shell, overflow-y-auto on <main>). Playwright's
+      // fullPage:true measures the *document's* scroll height, which this
+      // layout keeps pinned at exactly one viewport tall -- so a plain
+      // fullPage screenshot silently captures only whatever fits above the
+      // fold and drops everything a reviewer would have had to scroll `main`
+      // to see. Release the shell's height/overflow constraints so the whole
+      // document grows to its natural content height before shooting, then
+      // fullPage:true captures everything for real.
+      await page.evaluate(() => {
+        const main = document.getElementById("main");
+        if (main) {
+          main.style.overflow = "visible";
+          main.style.height = "auto";
+        }
+        const shell = main ? main.closest(".h-screen") : null;
+        if (shell) {
+          shell.style.height = "auto";
+          shell.style.overflow = "visible";
+          // Without this, the sidebar (h-full) stretches to match the now much
+          // taller content column instead of keeping its own natural height.
+          shell.style.alignItems = "flex-start";
+        }
+      });
+
       const target = path.join(OUT_DIR, name);
       await page.screenshot({ path: target, fullPage: true });
       log(`wrote ${name} (${route})`);

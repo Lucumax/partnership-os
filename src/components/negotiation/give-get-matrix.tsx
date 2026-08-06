@@ -58,9 +58,13 @@ export function GiveGetMatrix({ rows, base, upside }: GiveGetMatrixProps) {
           </TableBody>
         </Table>
         <p className="mt-3 text-xs text-muted-foreground">
-          Economic impact is a fixed share of the headroom between the base and upside scenarios
-          ({formatUsdM(upside.confidenceAdjustedValueUsd)} vs{" "}
-          {formatUsdM(base.confidenceAdjustedValueUsd)}).
+          Economic impact figures are model-grounded ceilings, not negotiated point estimates —
+          each is tied to a specific line item already on this screen (the NPV of the annual
+          license fee, confidence-adjusted exclusivity/implementation cost, or NPV of cash
+          deferred by a pilot). See each row&apos;s strategic impact for its source; treat the
+          number as the most that concession could be worth, not a price. For context, this base
+          case&apos;s confidence-adjusted value is {formatUsdM(base.confidenceAdjustedValueUsd)}{" "}
+          against an upside of {formatUsdM(upside.confidenceAdjustedValueUsd)}.
         </p>
       </CardContent>
     </Card>

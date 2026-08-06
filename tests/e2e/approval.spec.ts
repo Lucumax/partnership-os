@@ -33,8 +33,15 @@ test.describe("approval state stays consistent after clicking approve", () => {
     await expect(approveButton).toBeVisible();
     await approveButton.click();
 
-    // The timeline banner flips to approved...
-    await expect(page.getByText("Decision approved", { exact: false })).toBeVisible();
+    // The timeline banner flips to approved. Matched with `exact: true`
+    // because the approval event this click appends to the timeline has a
+    // rationale sentence ("...decision approved.") that also contains this
+    // substring case-insensitively -- a loose substring match trips
+    // Playwright's strict mode by resolving to both the banner badge and
+    // that rationale text. The badge's own text content is exactly
+    // "Decision approved" (icon has no text), so the exact match scopes
+    // this assertion to the banner without weakening what it proves.
+    await expect(page.getByText("Decision approved", { exact: true })).toBeVisible();
 
     // ...and so does everything else on the page: the Q7 explainability
     // answer and the header AI label. Nothing may still read "awaiting".

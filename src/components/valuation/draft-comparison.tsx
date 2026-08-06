@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -99,6 +100,7 @@ export function DraftValuationComparison({ draft }: DraftValuationComparisonProp
         </div>
 
         <Table>
+          <TableCaption className="sr-only">Draft vs. seeded case valuation by scenario</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Scenario</TableHead>

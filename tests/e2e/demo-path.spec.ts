@@ -38,9 +38,18 @@ test("full demo path renders the Atlas case with seeded numbers", async ({ page 
   await page.goto("/opportunities/atlas/negotiation");
   await expect(page.getByText("Decision · Pilot", { exact: false }).first()).toBeVisible();
   await expect(page.getByText("$7.7M", { exact: true }).first()).toBeVisible();
-  await expect(page.getByText("$36.8M", { exact: true }).first()).toBeVisible();
+  // Target is the midpoint of the opening anchor (downside CAV, $7.7M) and the
+  // reservation ceiling (base CAV, $25.2M) -- not the old base/upside midpoint
+  // ($36.8M), which mixed a price position with the unpriced upside case. See
+  // computeRecommendation in src/lib/valuation/engine.ts and the matching
+  // comment in src/lib/export/__tests__/export.test.ts.
+  await expect(page.getByText("$16.4M", { exact: true }).first()).toBeVisible();
   await expect(page.getByText("$25.2M", { exact: true }).first()).toBeVisible();
-  await expect(page.getByText("$48.4M", { exact: true }).first()).toBeVisible();
+  // Walk-away threshold restates the reservation ceiling (base CAV) in nominal
+  // cash terms (reservationValueUsd * nominalToPresentValueRatio) -- not the
+  // old $48.4M (upside CAV), which is a different, unrelated scenario figure.
+  // See computeRecommendation in src/lib/valuation/engine.ts.
+  await expect(page.getByText("$30.5M", { exact: true }).first()).toBeVisible();
 
   // 6. Audit (minute 4-5): timeline + approval
   await page.goto("/opportunities/atlas/audit");

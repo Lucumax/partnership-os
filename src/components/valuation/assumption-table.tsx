@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Table,
   TableBody,
@@ -43,15 +44,15 @@ export function AssumptionTable({ rows, onChange }: AssumptionTableProps) {
       <TableCaption className="sr-only">Assumption inputs</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead>Variable</TableHead>
+          <TableHead className="w-24">Variable</TableHead>
           {CELL_KEYS.map((key) => (
             <TableHead key={key} className="w-24 text-right">
               {key}
             </TableHead>
           ))}
-          <TableHead className="min-w-44">Evidence</TableHead>
+          <TableHead className="min-w-32">Evidence</TableHead>
           <TableHead className="w-28">Confidence</TableHead>
-          <TableHead className="w-32">Owner</TableHead>
+          <TableHead className="min-w-24">Owner</TableHead>
           <TableHead className="w-24">Updated</TableHead>
         </TableRow>
       </TableHeader>
@@ -78,7 +79,7 @@ export function AssumptionTable({ rows, onChange }: AssumptionTableProps) {
                       type="number"
                       step="any"
                       inputMode="decimal"
-                      className="h-7 w-full min-w-16 text-right"
+                      className="h-7 w-full min-w-14 text-right"
                       value={row[key]}
                       onChange={(event) =>
                         onChange(row.id, { [key]: event.target.value, lastUpdatedAt: TODAY })
@@ -87,9 +88,16 @@ export function AssumptionTable({ rows, onChange }: AssumptionTableProps) {
                   </TableCell>
                 ))}
                 <TableCell className="align-top whitespace-normal">
-                  <Input
+                  {/* Evidence notes vary widely in length (a few words to a full
+                      sentence); a single-line <input> always clips the tail of the
+                      longer ones no matter how wide the column, because inputs never
+                      wrap. A wrapping textarea (auto-sized to its content via
+                      field-sizing-content, see ui/textarea.tsx) grows to fit whatever
+                      text is actually there instead of hiding it. */}
+                  <Textarea
                     value={row.evidence}
-                    className="h-7"
+                    rows={1}
+                    className="min-h-7 resize-none py-1 text-sm leading-snug"
                     onChange={(event) => onChange(row.id, { evidence: event.target.value })}
                   />
                 </TableCell>
@@ -113,9 +121,18 @@ export function AssumptionTable({ rows, onChange }: AssumptionTableProps) {
                   </Select>
                 </TableCell>
                 <TableCell className="align-top">
-                  <Input
+                  {/* Owner tokens ("research.stakeholder") are long, dotted, and have
+                      no spaces, so plain word-wrap can't break them at all -- without
+                      break-all this column would have to be ~150px wide to avoid ever
+                      clipping the longest name. break-all lets the column stay
+                      compact: short owners ("deal.lead") still render on a single
+                      line because they already fit the column, and only the two or
+                      three genuinely long ones wrap onto a second line instead of
+                      being hidden. */}
+                  <Textarea
                     value={row.owner}
-                    className="h-7"
+                    rows={1}
+                    className="min-h-7 resize-none py-1 text-sm leading-snug break-all"
                     onChange={(event) => onChange(row.id, { owner: event.target.value })}
                   />
                 </TableCell>
