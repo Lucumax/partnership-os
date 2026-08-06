@@ -20,9 +20,9 @@ export function KpiCard({ label, value, caption, detail }: KpiCardProps) {
           {value}
         </div>
         {caption ? (
-          <div className="text-xs text-muted-foreground">{caption}</div>
+          <div className="text-xs font-medium text-muted-foreground">{caption}</div>
         ) : null}
-        {detail ? <div className="text-xs text-muted-foreground">{detail}</div> : null}
+        {detail ? <div className="text-xs font-medium text-muted-foreground">{detail}</div> : null}
       </CardContent>
     </Card>
   );

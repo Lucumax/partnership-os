@@ -136,7 +136,7 @@ export function AssumptionTable({ rows, onChange }: AssumptionTableProps) {
                     onChange={(event) => onChange(row.id, { owner: event.target.value })}
                   />
                 </TableCell>
-                <TableCell className="align-top text-xs text-muted-foreground tabular-nums">
+                <TableCell className="align-top text-xs font-medium text-muted-foreground tabular-nums">
                   {row.lastUpdatedAt}
                 </TableCell>
               </TableRow>

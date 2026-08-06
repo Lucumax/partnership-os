@@ -320,7 +320,7 @@ export default function OpportunityOverviewPage() {
                     <TableBody>
                       {negotiationPosition.map((row) => (
                         <TableRow key={row.label}>
-                          <TableCell className="text-muted-foreground">{row.label}</TableCell>
+                          <TableCell className="font-medium text-muted-foreground">{row.label}</TableCell>
                           <TableCell className="text-right tabular-nums">{row.value}</TableCell>
                         </TableRow>
                       ))}
@@ -560,7 +560,7 @@ export default function OpportunityOverviewPage() {
                     {opportunity.approvals.map((approval) => (
                       <TableRow key={approval.id}>
                         <TableCell className="font-medium">{approval.gate}</TableCell>
-                        <TableCell className="text-muted-foreground">{approval.approver}</TableCell>
+                        <TableCell className="font-medium text-muted-foreground">{approval.approver}</TableCell>
                         <TableCell>
                           <Badge variant="secondary">Approved</Badge>
                         </TableCell>

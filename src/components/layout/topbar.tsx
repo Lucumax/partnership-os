@@ -17,10 +17,10 @@ export function TopBar() {
         </span>
         <span className="truncate text-sm font-semibold">{opportunity.name}</span>
         <Badge variant="outline">Synthetic</Badge>
-        <span className="hidden text-xs text-muted-foreground md:inline">
+        <span className="hidden text-xs font-medium text-muted-foreground md:inline">
           Stage {stageLabel(opportunity.stage)}
         </span>
-        <span className="hidden text-xs text-muted-foreground lg:inline">
+        <span className="hidden text-xs font-medium text-muted-foreground lg:inline">
           Owner {opportunity.owner}
         </span>
       </div>

@@ -44,7 +44,7 @@ export function Sidebar() {
         </div>
         <div>
           <div className="text-sm font-semibold tracking-tight">Partnership OS</div>
-          <div className="text-[10px] leading-none text-muted-foreground">Valuation · Negotiation · Governance</div>
+          <div className="text-[10px] leading-none font-medium text-muted-foreground">Valuation · Negotiation · Governance</div>
         </div>
       </div>
       <nav aria-label="Primary" className="flex flex-1 flex-col gap-0.5 p-3">
@@ -71,7 +71,7 @@ export function Sidebar() {
           );
         })}
       </nav>
-      <div className="border-t p-3 text-xs text-muted-foreground">
+      <div className="border-t p-3 text-xs font-medium text-muted-foreground">
         <div>Synthetic demo data</div>
         <div className="mt-0.5">Local-first MVP · no live AI</div>
       </div>
